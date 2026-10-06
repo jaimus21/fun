@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Movies Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.8);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/80 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-film text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-white leading-none">CineVault 100</h1>
+                    <span class="text-xs text-slate-400">Curated Masterpieces Dashboard</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <!-- Watch Stats Pill -->
+                <div class="hidden sm:flex items-center bg-slate-800/80 border border-slate-700/60 rounded-full px-3 py-1 text-xs font-medium text-slate-300">
+                    <span class="text-indigo-400 font-semibold mr-1.5" id="watched-count-badge">0</span>/100 Watched
+                </div>
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:inline"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Controls & Filter Toolbar -->
+        <div class="bg-slate-900/60 backdrop-blur border border-slate-800 rounded-2xl p-4 sm:p-6 mb-8 shadow-xl">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                
+                <!-- Search input -->
+                <div class="md:col-span-5 relative">
+                    <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" placeholder="Search by title, director, stars..." 
+                        class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+
+                <!-- Watched Filter -->
+                <div class="md:col-span-3">
+                    <select id="filter-watched" class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                        <option value="all">All Movies (100)</option>
+                        <option value="watched">Watched Only</option>
+                        <option value="unwatched">Unwatched Only</option>
+                    </select>
+                </div>
+
+                <!-- Sort By -->
+                <div class="md:col-span-2">
+                    <select id="sort-by" class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                        <option value="rank-asc">Rank (1 → 100)</option>
+                        <option value="rating-desc">IMDb Rating</option>
+                        <option value="year-desc">Release Year (New)</option>
+                        <option value="year-asc">Release Year (Old)</option>
+                    </select>
+                </div>
+
+                <!-- Layout View Toggle -->
+                <div class="md:col-span-2 flex items-center justify-end space-x-2">
+                    <button id="view-grid" title="Grid View" class="p-2.5 rounded-xl bg-indigo-600 text-white transition-all shadow-md shadow-indigo-600/20">
+                        <i class="fa-solid fa-border-all"></i>
+                    </button>
+                    <button id="view-list" title="List View" class="p-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-list"></i>
+                    </button>
+                    <button id="reset-filters" title="Reset Filters" class="p-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="movies-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Dynamically populated via script -->
+        </div>
+
+        <!-- Empty state -->
+        <div id="empty-state" class="hidden text-center py-20">
+            <div class="text-slate-600 text-5xl mb-4">
+                <i class="fa-solid fa-clapperboard"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-300">No movies found</h3>
+            <p class="text-sm text-slate-500 mt-1">Try adjusting your search query or filter settings.</p>
+        </div>
+    </main>
+
+    <div id="movie-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="modal-content" class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-all duration-300">
+            <!-- Modal populated via JS -->
+        </div>
+    </div>
+
+    <script>
+        // 100 Parsed movies dataset generated from source text
+        const moviesData = [
+            { id: 1, title: "Parasite", year: 2019, duration: "2h 12m", rating: "R", metascore: 97, imdb: 8.5, votes: "1.2M", synopsis: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.", director: "Bong Joon Ho", stars: "Song Kang-ho, Lee Sun-kyun, Cho Yeo-jeong", streaming: ["Hulu", "Max"] },
+            { id: 2, title: "Mulholland Drive", year: 2001, duration: "2h 27m", rating: "R", metascore: 87, imdb: 7.9, votes: "435K", synopsis: "After a car wreck on Mulholland Drive renders a woman amnesiac, she and a Hollywood-hopeful search for clues and answers across Los Angeles in a twisting venture beyond dreams and reality.", director: "David Lynch", stars: "Naomi Watts, Laura Harring, Justin Theroux", streaming: ["Apple TV", "Prime Video"] },
+            { id: 3, title: "There Will Be Blood", year: 2007, duration: "2h 38m", rating: "R", metascore: 93, imdb: 8.2, votes: "721K", synopsis: "A story of family, religion, hatred, oil and madness, focusing on a turn-of-the-century prospector in the early days of the business.", director: "Paul Thomas Anderson", stars: "Daniel Day-Lewis, Paul Dano, Ciarán Hinds", streaming: ["Paramount+", "Apple TV"] },
+            { id: 4, title: "In the Mood for Love", year: 2000, duration: "1h 38m", rating: "PG", metascore: 87, imdb: 8.0, votes: "192K", synopsis: "Two neighbors form a strong bond after both suspect extramarital activities of their spouses. However, they agree to keep their bond platonic so as not to commit similar wrongs.", director: "Wong Kar-Wai", stars: "Maggie Cheung, Tony Leung Chiu-wai", streaming: ["Max", "Criterion Channel"] },
+            { id: 5, title: "Moonlight", year: 2016, duration: "1h 51m", rating: "R", metascore: 99, imdb: 7.4, votes: "357K", synopsis: "A young African-American man grapples with his identity and sexuality while experiencing the everyday struggles of childhood, adolescence, and burgeoning adulthood.", director: "Barry Jenkins", stars: "Mahershala Ali, Naomie Harris, Trevante Rhodes", streaming: ["Max", "Showtime"] },
+            { id: 6, title: "No Country for Old Men", year: 2007, duration: "2h 2m", rating: "R", metascore: 92, imdb: 8.2, votes: "1.2M", synopsis: "Violence and mayhem ensue after a hunter stumbles upon the aftermath of a drug deal gone wrong and over two million dollars in cash near the Rio Grande.", director: "Ethan Coen, Joel Coen", stars: "Tommy Lee Jones, Javier Bardem, Josh Brolin", streaming: ["Paramount+", "Pluto TV"] },
+            { id: 7, title: "Eternal Sunshine of the Spotless Mind", year: 2004, duration: "1h 48m", rating: "R", metascore: 89, imdb: 8.3, votes: "1.2M", synopsis: "When their relationship turns sour, a couple undergoes a medical procedure to have each other erased from their memories forever.", director: "Michel Gondry", stars: "Jim Carrey, Kate Winslet, Tom Wilkinson", streaming: ["Peacock", "Apple TV"] },
+            { id: 8, title: "Get Out", year: 2017, duration: "1h 44m", rating: "R", metascore: 85, imdb: 7.8, votes: "840K", synopsis: "A young African-American visits his white girlfriend's parents for the weekend, where his simmering uneasiness about their reception of him eventually reaches a boiling point.", director: "Jordan Peele", stars: "Daniel Kaluuya, Allison Williams, Bradley Whitford", streaming: ["Prime Video", "Apple TV"] },
+            { id: 9, title: "Spirited Away", year: 2001, duration: "2h 4m", rating: "PG", metascore: 96, imdb: 8.6, votes: "988K", synopsis: "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches and spirits, and where humans are changed into beasts.", director: "Hayao Miyazaki", stars: "Miyu Irino, Rumi Hiiragi, Mari Natsuki", streaming: ["Max", "Apple TV"] },
+            { id: 10, title: "The Social Network", year: 2010, duration: "2h", rating: "PG-13", metascore: 95, imdb: 7.8, votes: "831K", synopsis: "As Harvard student Mark Zuckerberg creates the social networking site that would become known as Facebook, he is sued by the twins who claimed he stole their idea and by the co-founder who was later squeezed out of the business.", director: "David Fincher", stars: "Jesse Eisenberg, Andrew Garfield, Justin Timberlake", streaming: ["Netflix", "Apple TV"] },
+            { id: 11, title: "Mad Max: Fury Road", year: 2015, duration: "2h", rating: "R", metascore: 90, imdb: 8.1, votes: "1.2M", synopsis: "In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler in search for her homeland with the aid of a group of female prisoners, a psychotic worshipper and a drifter named Max.", director: "George Miller", stars: "Tom Hardy, Charlize Theron, Nicholas Hoult", streaming: ["Max", "Apple TV"] },
+            { id: 12, title: "The Zone of Interest", year: 2023, duration: "1h 45m", rating: "PG-13", metascore: 92, imdb: 7.3, votes: "193K", synopsis: "The commandant of Auschwitz and his wife strive to build a dream life for their family in a house next to the camp.", director: "Jonathan Glazer", stars: "Christian Friedel, Sandra Hüller, Johann Karthaus", streaming: ["Max", "Paramount+"] },
+            { id: 13, title: "Children of Men", year: 2006, duration: "1h 49m", rating: "R", metascore: 84, imdb: 7.9, votes: "573K", synopsis: "In 2027, in a chaotic world in which women have somehow become infertile, a former activist agrees to help transport a miraculously pregnant woman to a sanctuary at sea.", director: "Alfonso Cuarón", stars: "Julianne Moore, Clive Owen, Chiwetel Ejiofor", streaming: ["Apple TV", "Prime Video"] },
+            { id: 14, title: "Inglourious Basterds", year: 2009, duration: "2h 33m", rating: "R", metascore: 69, imdb: 8.4, votes: "1.8M", synopsis: "In Nazi-occupied France during World War II, a plan to assassinate Nazi leaders by a group of Jewish U.S. soldiers coincides with a theatre owner's vengeful plans for the same.", director: "Quentin Tarantino", stars: "Brad Pitt, Diane Kruger, Eli Roth", streaming: ["Prime Video", "Apple TV"] },
+            { id: 15, title: "City of God", year: 2002, duration: "2h 10m", rating: "R", metascore: 79, imdb: 8.6, votes: "884K", synopsis: "In the slums of Rio, two kids' paths diverge as one struggles to become a photographer and the other a kingpin.", director: "Kátia Lund, Fernando Meirelles", stars: "Alexandre Rodrigues, Leandro Firmino, Matheus Nachtergaele", streaming: ["Paramount+", "Apple TV"] },
+            { id: 16, title: "Crouching Tiger, Hidden Dragon", year: 2000, duration: "2h", rating: "PG-13", metascore: 94, imdb: 7.8, votes: "298K", synopsis: "A young Chinese warrior steals a sword from a famed swordsman and then escapes into a world of romantic adventure with a mysterious man in the frontier of the nation.", director: "Ang Lee", stars: "Chow Yun-Fat, Michelle Yeoh, Ziyi Zhang", streaming: ["Sony One", "Apple TV"] },
+            { id: 17, title: "Brokeback Mountain", year: 2005, duration: "2h 14m", rating: "R", metascore: 87, imdb: 7.7, votes: "423K", synopsis: "Two shepherds fall for each other, but their relationship becomes complicated when they both get married to their respective girlfriends.", director: "Ang Lee", stars: "Jake Gyllenhaal, Heath Ledger, Michelle Williams", streaming: ["Peacock", "Apple TV"] },
+            { id: 18, title: "Y tu mamá también", year: 2001, duration: "1h 46m", rating: "R", metascore: 89, imdb: 7.7, votes: "143K", synopsis: "In Mexico, two teenage boys and an older woman embark on a road trip and learn a thing or two about life and each other.", director: "Alfonso Cuarón", stars: "Maribel Verdú, Gael García Bernal, Daniel Giménez Cacho", streaming: ["Criterion Channel", "Apple TV"] },
+            { id: 19, title: "Zodiac", year: 2007, duration: "2h 37m", rating: "R", metascore: 79, imdb: 7.7, votes: "693K", synopsis: "Between 1968 and 1983, a San Francisco cartoonist becomes an amateur detective obsessed with tracking down the Zodiac Killer, an unidentified individual who terrorizes Northern California with a killing spree.", director: "David Fincher", stars: "Jake Gyllenhaal, Robert Downey Jr., Mark Ruffalo", streaming: ["Paramount+", "Apple TV"] },
+            { id: 20, title: "The Wolf of Wall Street", year: 2013, duration: "3h", rating: "R", metascore: 75, imdb: 8.2, votes: "1.8M", synopsis: "Based on the true story of Jordan Belfort, from his rise to a wealthy stock-broker living the high life to his fall involving crime, corruption and the federal government.", director: "Martin Scorsese", stars: "Leonardo DiCaprio, Jonah Hill, Margot Robbie", streaming: ["Paramount+", "Apple TV"] },
+            { id: 21, title: "The Royal Tenenbaums", year: 2001, duration: "1h 50m", rating: "R", metascore: 76, imdb: 7.6, votes: "339K", synopsis: "The eccentric members of a dysfunctional family reluctantly gather under the same roof for various reasons.", director: "Wes Anderson", stars: "Gene Hackman, Gwyneth Paltrow, Anjelica Huston", streaming: ["Disney+", "Apple TV"] },
+            { id: 22, title: "The Grand Budapest Hotel", year: 2014, duration: "1h 39m", rating: "R", metascore: 88, imdb: 8.1, votes: "989K", synopsis: "The owner of an aging high-class hotel regales a writer with tales of serving as a lobby boy under an exceptional concierge in the hotel's glory years.", director: "Wes Anderson", stars: "Ralph Fiennes, F. Murray Abraham, Mathieu Amalric", streaming: ["Disney+", "Apple TV"] },
+            { id: 23, title: "Boyhood", year: 2014, duration: "2h 45m", rating: "R", metascore: 100, imdb: 7.9, votes: "384K", synopsis: "The life of Mason, from early childhood to his arrival at college.", director: "Richard Linklater", stars: "Ellar Coltrane, Patricia Arquette, Ethan Hawke", streaming: ["Paramount+", "Apple TV"] },
+            { id: 24, title: "Her", year: 2013, duration: "2h 6m", rating: "R", metascore: 91, imdb: 7.9, votes: "735K", synopsis: "In the near future, a lonely writer develops an unlikely relationship with an operating system designed to meet his every need.", director: "Spike Jonze", stars: "Joaquin Phoenix, Amy Adams, Scarlett Johansson", streaming: ["Max", "Apple TV"] },
+            { id: 25, title: "Phantom Thread", year: 2017, duration: "2h 10m", rating: "R", metascore: 90, imdb: 7.4, votes: "165K", synopsis: "Set in 1950s London, Reynolds Woodcock is a renowned dressmaker whose fastidious life is disrupted by a young, strong-willed woman, Alma, who becomes his muse and lover.", director: "Paul Thomas Anderson", stars: "Vicky Krieps, Daniel Day-Lewis, Lesley Manville", streaming: ["Apple TV", "Prime Video"] },
+            { id: 26, title: "Anatomy of a Fall", year: 2023, duration: "2h 31m", rating: "R", metascore: 86, imdb: 7.6, votes: "239K", synopsis: "A woman is suspected of murder after her husband's death; their half-blind son faces a moral dilemma as the main witness.", director: "Justine Triet", stars: "Sandra Hüller, Swann Arlaud, Milo Machado-Graner", streaming: ["Hulu", "Apple TV"] },
+            { id: 27, title: "Adaptation.", year: 2002, duration: "1h 55m", rating: "R", metascore: 83, imdb: 7.6, votes: "215K", synopsis: "A lovelorn screenwriter becomes desperate as he tries and fails to adapt 'The Orchid Thief' by Susan Orlean for the screen.", director: "Spike Jonze", stars: "Nicolas Cage, Meryl Streep, Chris Cooper", streaming: ["Apple TV", "Prime Video"] },
+            { id: 28, title: "The Dark Knight", year: 2008, duration: "2h 32m", rating: "PG-13", metascore: 85, imdb: 9.1, votes: "3.2M", synopsis: "When a menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman, James Gordon and Harvey Dent must work together to put an end to the madness.", director: "Christopher Nolan", stars: "Christian Bale, Heath Ledger, Aaron Eckhart", streaming: ["Max", "Prime Video"] },
+            { id: 29, title: "Arrival", year: 2016, duration: "1h 56m", rating: "PG-13", metascore: 81, imdb: 7.9, votes: "882K", synopsis: "Linguist Louise Banks leads a team of investigators when gigantic spaceships touch down around the world. As nations teeter on the verge of global war, Banks and her crew must find a way to communicate with the extraterrestrial visitors.", director: "Denis Villeneuve", stars: "Amy Adams, Jeremy Renner, Forest Whitaker", streaming: ["Paramount+", "Apple TV"] },
+            { id: 30, title: "Lost in Translation", year: 2003, duration: "1h 42m", rating: "R", metascore: 91, imdb: 7.7, votes: "536K", synopsis: "A fading movie star and a neglected married young woman come to be unlikely soulmates in Tokyo.", director: "Sofia Coppola", stars: "Bill Murray, Scarlett Johansson, Giovanni Ribisi", streaming: ["Focus Features", "Apple TV"] },
+            { id: 31, title: "The Departed", year: 2006, duration: "2h 31m", rating: "R", metascore: 85, imdb: 8.5, votes: "1.6M", synopsis: "An undercover cop and a mole in the police attempt to identify each other while infiltrating an Irish gang in South Boston.", director: "Martin Scorsese", stars: "Leonardo DiCaprio, Matt Damon, Jack Nicholson", streaming: ["Max", "Apple TV"] },
+            { id: 32, title: "Bridesmaids", year: 2011, duration: "2h 5m", rating: "R", metascore: 75, imdb: 6.8, votes: "329K", synopsis: "Competition between the maid of honor and a bridesmaid, over who is the bride's best friend, threatens to upend the life of an out-of-work pastry chef.", director: "Paul Feig", stars: "Kristen Wiig, Maya Rudolph, Rose Byrne", streaming: ["Peacock", "Apple TV"] },
+            { id: 33, title: "A Separation", year: 2011, duration: "2h 3m", rating: "PG-13", metascore: 95, imdb: 8.3, votes: "281K", synopsis: "A married couple have to decide whether to improve their daughter's life by moving abroad or to stay in Iran and look after a deteriorating parent with Alzheimer's disease.", director: "Asghar Farhadi", stars: "Payman Maadi, Leila Hatami, Sareh Bayat", streaming: ["Sony One", "Apple TV"] },
+            { id: 34, title: "WALL·E", year: 2008, duration: "1h 38m", rating: "G", metascore: 95, imdb: 8.4, votes: "1.3M", synopsis: "In a future where humans have temporarily abandoned Earth, a trash-compacting robot falls in love with a flying droid and helps her on her quest to restore hope to mankind.", director: "Andrew Stanton", stars: "Ben Burtt, Elissa Knight, Jeff Garlin", streaming: ["Disney+", "Apple TV"] },
+            { id: 35, title: "A Prophet", year: 2009, duration: "2h 35m", rating: "R", metascore: 90, imdb: 7.8, votes: "108K", synopsis: "A delinquent Muslim man struggles to get by in prison until he is taken under the wing of a powerful mob boss, but his gradual rise through the organization's ranks brings him in conflict with his mentor.", director: "Jacques Audiard", stars: "Tahar Rahim, Niels Arestrup, Adel Bencherif", streaming: ["Apple TV", "Prime Video"] },
+            { id: 36, title: "A Serious Man", year: 2009, duration: "1h 46m", rating: "R", metascore: 88, imdb: 7.0, votes: "160K", synopsis: "Larry Gopnik, a Midwestern physics teacher, watches his life unravel over multiple sudden incidents. Despite seeking meaning and answers amidst his turmoils, he seems to keep sinking.", director: "Ethan Coen, Joel Coen", stars: "Michael Stuhlbarg, Richard Kind, Sari Lennick", streaming: ["Prime Video", "Apple TV"] },
+            { id: 37, title: "Call Me by Your Name", year: 2017, duration: "2h 12m", rating: "R", metascore: 94, imdb: 7.8, votes: "365K", synopsis: "In the summer of 1983, 17-year-old Elio is spending the days with his family at their villa in Lombardy, Italy. He soon meets 24-year-old Oliver, an intern working for Elio's father. They discover the heady beauty of awakening desire.", director: "Luca Guadagnino", stars: "Timothée Chalamet, Armie Hammer, Michael Stuhlbarg", streaming: ["Max", "Apple TV"] },
+            { id: 38, title: "Portrait of a Lady on Fire", year: 2019, duration: "2h 2m", rating: "R", metascore: 95, imdb: 8.0, votes: "131K", synopsis: "On an isolated island in Brittany at the end of the eighteenth century, a female painter is obliged to paint a wedding portrait of a young woman.", director: "Céline Sciamma", stars: "Noémie Merlant, Adèle Haenel, Luàna Bajrami", streaming: ["Hulu", "Criterion Channel"] },
+            { id: 39, title: "Lady Bird", year: 2017, duration: "1h 34m", rating: "R", metascore: 93, imdb: 7.4, votes: "370K", synopsis: "A fiercely independent teenager tries to make her own way in the world while wanting to get out of her hometown of Sacramento, California, and to get away from her complicated mother and recently-unemployed father.", director: "Greta Gerwig", stars: "Saoirse Ronan, Laurie Metcalf, Tracy Letts", streaming: ["Paramount+", "Apple TV"] },
+            { id: 40, title: "Yi Yi", year: 2000, duration: "2h 53m", rating: "Not Rated", metascore: 94, imdb: 8.1, votes: "35K", synopsis: "Portrait of a middle-class family in Taipei. A man in his forties, his teenage daughter and his eight-year-old son experience life, navigating between remorse, hope and disappointment.", director: "Edward Yang", stars: "Nien-Jen Wu, Elaine Jin, Issey Ogata", streaming: ["Criterion Channel"] },
+            { id: 41, title: "Amélie", year: 2001, duration: "2h 2m", rating: "R", metascore: 70, imdb: 8.2, votes: "848K", synopsis: "Despite being caught in her imaginative world, young waitress Amelie decides to help people find happiness. Her quest to spread joy leads her on a journey during which she finds true love.", director: "Jean-Pierre Jeunet", stars: "Audrey Tautou, Mathieu Kassovitz, Rufus", streaming: ["Apple TV", "Prime Video"] },
+            { id: 42, title: "The Master", year: 2012, duration: "2h 18m", rating: "R", metascore: 86, imdb: 7.1, votes: "204K", synopsis: "A Naval veteran arrives home from war unsettled and uncertain of his future - until he is tantalized by a cult and its charismatic leader.", director: "Paul Thomas Anderson", stars: "Joaquin Phoenix, Philip Seymour Hoffman, Amy Adams", streaming: ["Apple TV", "Prime Video"] },
+            { id: 43, title: "Oldboy", year: 2003, duration: "2h", rating: "R", metascore: 78, imdb: 8.3, votes: "735K", synopsis: "After being kidnapped and imprisoned for fifteen years, Oh Dae-Su is released, only to find that he must track down his captor in five days.", director: "Park Chan-wook", stars: "Choi Min-sik, Yoo Ji-tae, Kang Hye-jeong", streaming: ["Neon", "Apple TV"] },
+            { id: 44, title: "Once Upon a Time in... Hollywood", year: 2019, duration: "2h 41m", rating: "R", metascore: 84, imdb: 7.6, votes: "981K", synopsis: "As Hollywood's Golden Age is winding down, a television actor and his stunt double endeavor to achieve lasting success.", director: "Quentin Tarantino", stars: "Leonardo DiCaprio, Brad Pitt, Margot Robbie", streaming: ["Starz", "Apple TV"] },
+            { id: 45, title: "Moneyball", year: 2011, duration: "2h 13m", rating: "PG-13", metascore: 87, imdb: 7.6, votes: "518K", synopsis: "Oakland A's general manager Billy Beane's successful attempt to assemble a baseball team on a lean budget by employing computer-generated analysis to acquire new players.", director: "Bennett Miller", stars: "Brad Pitt, Robin Wright, Jonah Hill", streaming: ["Apple TV", "Prime Video"] },
+            { id: 46, title: "Roma", year: 2018, duration: "2h 15m", rating: "R", metascore: 96, imdb: 7.6, votes: "180K", synopsis: "A year in the life of an upper-middle-class family's maid in Mexico City in the early 1970s.", director: "Alfonso Cuarón", stars: "Yalitza Aparicio, Marina de Tavira, Diego Cortina Autrey", streaming: ["Netflix"] },
+            { id: 47, title: "Almost Famous", year: 2000, duration: "2h 2m", rating: "R", metascore: 90, imdb: 7.9, votes: "318K", synopsis: "A high-school boy in the early 1970s is given the chance to write a story for Rolling Stone magazine about an up-and-coming rock band as he accompanies them on their concert tour.", director: "Cameron Crowe", stars: "Billy Crudup, Patrick Fugit, Kate Hudson", streaming: ["Paramount+", "Apple TV"] },
+            { id: 48, title: "The Lives of Others", year: 2006, duration: "2h 17m", rating: "R", metascore: 89, imdb: 8.4, votes: "448K", synopsis: "In 1984 East Berlin, an agent of the secret police conducting surveillance on a writer and his lover finds himself becoming increasingly absorbed by their lives.", director: "Florian Henckel von Donnersmarck", stars: "Ulrich Mühe, Martina Gedeck, Sebastian Koch", streaming: ["Sony One", "Apple TV"] },
+            { id: 49, title: "Before Sunset", year: 2004, duration: "1h 20m", rating: "R", metascore: 91, imdb: 8.1, votes: "320K", synopsis: "Nine years after Jesse and Celine first met, they encounter each other again on the French leg of Jesse's book tour.", director: "Richard Linklater", stars: "Ethan Hawke, Julie Delpy, Vernon Dobtcheff", streaming: ["Max", "Apple TV"] },
+            { id: 50, title: "Up", year: 2009, duration: "1h 36m", rating: "PG", metascore: 88, imdb: 8.3, votes: "1.3M", synopsis: "A grumpy old man turns his house into an airship using balloons and flies off to South America with a young stowaway.", director: "Pete Docter, Bob Peterson", stars: "Edward Asner, Jordan Nagai, John Ratzenberger", streaming: ["Disney+", "Apple TV"] },
+            { id: 51, title: "12 Years a Slave", year: 2013, duration: "2h 14m", rating: "R", metascore: 96, imdb: 8.1, votes: "796K", synopsis: "In the antebellum United States, Solomon Northup, a free black man from upstate New York, is abducted and sold into slavery.", director: "Steve McQueen", stars: "Chiwetel Ejiofor, Michael Kenneth Williams, Michael Fassbender", streaming: ["Hulu", "Apple TV"] },
+            { id: 52, title: "The Favourite", year: 2018, duration: "1h 59m", rating: "R", metascore: 91, imdb: 7.5, votes: "262K", synopsis: "In early 18th-century England, the status quo at the court is upset when a new servant arrives and endears herself to a frail Queen Anne.", director: "Yorgos Lanthimos", stars: "Olivia Colman, Emma Stone, Rachel Weisz", streaming: ["Hulu", "Apple TV"] },
+            { id: 53, title: "Borat", year: 2006, duration: "1h 24m", rating: "R", metascore: 89, imdb: 7.4, votes: "484K", synopsis: "Kazakh TV talking head Borat is dispatched to the United States to report on the greatest country in the world.", director: "Larry Charles", stars: "Sacha Baron Cohen, Ken Davitian, Luenell", streaming: ["Prime Video", "Apple TV"] },
+            { id: 54, title: "Pan's Labyrinth", year: 2006, duration: "1h 58m", rating: "R", metascore: 98, imdb: 8.2, votes: "754K", synopsis: "In 1944 Francoist Spain, an imaginative young girl meets a faun who tells her she's a princess and that she must prove her worthiness by completing three dangerous tasks.", director: "Guillermo del Toro", stars: "Ivana Baquero, Ariadna Gil, Sergi López", streaming: ["Max", "Apple TV"] },
+            { id: 55, title: "Inception", year: 2010, duration: "2h 28m", rating: "PG-13", metascore: 74, imdb: 8.8, votes: "2.9M", synopsis: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO, but his tragic past may doom the project and his team to disaster.", director: "Christopher Nolan", stars: "Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page", streaming: ["Max", "Prime Video"] },
+            { id: 56, title: "Punch-Drunk Love", year: 2002, duration: "1h 35m", rating: "R", metascore: 78, imdb: 7.3, votes: "200K", synopsis: "An entrepreneur with social anxiety falls victim to a blackmailing scheme that jeopardizes his chance at true love.", director: "Paul Thomas Anderson", stars: "Adam Sandler, Emily Watson, Philip Seymour Hoffman", streaming: ["Apple TV", "Prime Video"] },
+            { id: 57, title: "Best in Show", year: 2000, duration: "1h 30m", rating: "PG-13", metascore: 78, imdb: 7.5, votes: "77K", synopsis: "A behind-the-scenes look into the highly competitive and cut-throat world of dog shows through the eyes of a group of ruthless dog owners.", director: "Christopher Guest", stars: "Fred Willard, Eugene Levy, Catherine O'Hara", streaming: ["Apple TV", "Prime Video"] },
+            { id: 58, title: "Uncut Gems", year: 2019, duration: "2h 15m", rating: "R", metascore: 93, imdb: 7.4, votes: "363K", synopsis: "With his debts mounting and angry collectors closing in, a fast-talking New York City jeweler risks everything in hope of staying afloat and alive.", director: "Benny Safdie, Josh Safdie", stars: "Adam Sandler, Julia Fox, Idina Menzel", streaming: ["Netflix", "Apple TV"] },
+            { id: 59, title: "Toni Erdmann", year: 2016, duration: "2h 42m", rating: "R", metascore: 93, imdb: 7.3, votes: "56K", synopsis: "A practical joking father tries to reconnect with his hard working daughter by creating an outrageous alter ego and posing as her CEO's life coach.", director: "Maren Ade", stars: "Sandra Hüller, Peter Simonischek, Michael Wittenborn", streaming: ["Criterion Channel", "Apple TV"] },
+            { id: 60, title: "Whiplash", year: 2014, duration: "1h 46m", rating: "R", metascore: 89, imdb: 8.5, votes: "1.2M", synopsis: "A promising young drummer enrolls at a cut-throat music conservatory where his dreams of greatness are mentored by an instructor who will stop at nothing to realize a student's potential.", director: "Damien Chazelle", stars: "Miles Teller, J.K. Simmons, Melissa Benoist", streaming: ["Paramount+", "Apple TV"] },
+            { id: 61, title: "Kill Bill: Vol. 1", year: 2003, duration: "1h 51m", rating: "R", metascore: 69, imdb: 8.2, votes: "1.3M", synopsis: "After waking from a four-year coma, a former assassin wreaks vengeance on the team of assassins who betrayed her.", director: "Quentin Tarantino", stars: "Uma Thurman, David Carradine, Daryl Hannah", streaming: ["Paramount+", "Apple TV"] },
+            { id: 62, title: "Memento", year: 2000, duration: "1h 53m", rating: "R", metascore: 83, imdb: 8.4, votes: "1.5M", synopsis: "A former insurance investigator who now suffers from anterograde amnesia uses notes and tattoos to hunt down his wife's murderer.", director: "Christopher Nolan", stars: "Guy Pearce, Carrie-Anne Moss, Joe Pantoliano", streaming: ["Prime Video", "Apple TV"] },
+            { id: 63, title: "Little Miss Sunshine", year: 2006, duration: "1h 41m", rating: "R", metascore: 80, imdb: 7.8, votes: "567K", synopsis: "A family determined to get their young daughter into the finals of a beauty pageant take a cross-country trip in their VW bus.", director: "Jonathan Dayton, Valerie Faris", stars: "Steve Carell, Toni Collette, Greg Kinnear", streaming: ["Max", "Apple TV"] },
+            { id: 64, title: "Gone Girl", year: 2014, duration: "2h 29m", rating: "R", metascore: 79, imdb: 8.1, votes: "1.2M", synopsis: "The husband of a missing woman becomes the main suspect in her disappearance.", director: "David Fincher", stars: "Ben Affleck, Rosamund Pike, Neil Patrick Harris", streaming: ["Max", "Apple TV"] },
+            { id: 65, title: "Oppenheimer", year: 2023, duration: "3h", rating: "R", metascore: 90, imdb: 8.2, votes: "1.1M", synopsis: "A dramatization of the life story of J. Robert Oppenheimer, the physicist who had a large hand in the development of the atomic bombs that brought an end to World War II.", director: "Christopher Nolan", stars: "Cillian Murphy, Emily Blunt, Matt Damon", streaming: ["Peacock", "Apple TV"] },
+            { id: 66, title: "Spotlight", year: 2015, duration: "2h 9m", rating: "R", metascore: 93, imdb: 8.1, votes: "542K", synopsis: "The true story of how the Boston Globe uncovered the massive scandal of child molestation and cover-up within the local Catholic Archdiocese, shaking the entire Catholic Church to its core.", director: "Tom McCarthy", stars: "Mark Ruffalo, Michael Keaton, Rachel McAdams", streaming: ["Max", "Apple TV"] },
+            { id: 67, title: "Tár", year: 2022, duration: "2h 38m", rating: "R", metascore: 93, imdb: 7.4, votes: "111K", synopsis: "Set in the international world of Western classical music, the film centers on Lydia Tár, widely considered one of the greatest living composer-conductors and the very first female director of a major German orchestra.", director: "Todd Field", stars: "Cate Blanchett, Noémie Merlant, Nina Hoss", streaming: ["Peacock", "Apple TV"] },
+            { id: 68, title: "The Hurt Locker", year: 2008, duration: "2h 11m", rating: "R", metascore: 95, imdb: 7.5, votes: "500K", synopsis: "During the Iraq War, a Sergeant recently assigned to an army bomb squad is put at odds with his squad mates due to his maverick way of handling his work.", director: "Kathryn Bigelow", stars: "Jeremy Renner, Anthony Mackie, Brian Geraghty", streaming: ["Prime Video", "Apple TV"] },
+            { id: 69, title: "Under the Skin", year: 2013, duration: "1h 48m", rating: "R", metascore: 83, imdb: 6.3, votes: "174K", synopsis: "A mysterious young woman seduces lonely men in the evening hours in Scotland. However, events lead her to begin a process of self-discovery.", director: "Jonathan Glazer", stars: "Scarlett Johansson, Jeremy McWilliams, Lynsey Taylor Mackay", streaming: ["Max", "Apple TV"] },
+            { id: 70, title: "Let the Right One In", year: 2008, duration: "1h 54m", rating: "R", metascore: 82, imdb: 7.8, votes: "242K", synopsis: "A bullied boy forms a unique friendship with his new neighbor, a peculiar girl with a dark secret.", director: "Tomas Alfredson", stars: "Kåre Hedebrant, Lina Leandersson, Per Ragnar", streaming: ["Magnolia", "Apple TV"] },
+            { id: 71, title: "Ocean's Eleven", year: 2001, duration: "1h 56m", rating: "PG-13", metascore: 74, imdb: 7.7, votes: "685K", synopsis: "A thief and his team of associates plan a sophisticated heist to rob three Las Vegas casinos at the same time.", director: "Steven Soderbergh", stars: "George Clooney, Brad Pitt, Julia Roberts", streaming: ["Max", "Apple TV"] },
+            { id: 72, title: "Carol", year: 2015, duration: "1h 58m", rating: "R", metascore: 94, imdb: 7.3, votes: "155K", synopsis: "An aspiring photographer develops an intimate relationship with an older woman in 1950s New York.", director: "Todd Haynes", stars: "Cate Blanchett, Rooney Mara, Sarah Paulson", streaming: ["Tubi", "Apple TV"] },
+            { id: 73, title: "Ratatouille", year: 2007, duration: "1h 51m", rating: "G", metascore: 96, imdb: 8.1, votes: "969K", synopsis: "A rat who can cook makes an unusual alliance with a young kitchen worker at a famous Paris restaurant.", director: "Brad Bird, Jan Pinkava", stars: "Brad Garrett, Lou Romano, Patton Oswalt", streaming: ["Disney+", "Apple TV"] },
+            { id: 74, title: "The Florida Project", year: 2017, duration: "1h 51m", rating: "R", metascore: 92, imdb: 7.6, votes: "150K", synopsis: "A single mother and the manager of a roadside motel do their utmost to maintain the innocence of a six-year-old girl's life.", director: "Sean Baker", stars: "Brooklynn Prince, Bria Vinaite, Willem Dafoe", streaming: ["Showtime", "Apple TV"] },
+            { id: 75, title: "Amour", year: 2012, duration: "2h 7m", rating: "PG-13", metascore: 95, imdb: 7.9, votes: "111K", synopsis: "Georges and Anne are an octogenarian couple. They are cultivated, retired music teachers. Their daughter, also a musician, lives in Britain with her family. One day, Anne has a stroke, and the couple's bond of love is severely tested.", director: "Michael Haneke", stars: "Jean-Louis Trintignant, Emmanuelle Riva, Isabelle Huppert", streaming: ["Sony One", "Apple TV"] },
+            { id: 76, title: "O Brother, Where Art Thou?", year: 2000, duration: "1h 47m", rating: "PG-13", metascore: 69, imdb: 7.7, votes: "356K", synopsis: "In the deep south during the 1930s, three escaped convicts search for hidden treasure while a relentless lawman pursues them.", director: "Joel Coen, Ethan Coen", stars: "George Clooney, John Turturro, Tim Blake Nelson", streaming: ["Disney+", "Apple TV"] },
+            { id: 77, title: "Everything Everywhere All at Once", year: 2022, duration: "2h 19m", rating: "R", metascore: 81, imdb: 7.7, votes: "663K", synopsis: "A middle-aged Chinese immigrant is swept up into an insane adventure in which she alone can save existence by exploring other universes and connecting with the lives she could have led.", director: "Daniel Kwan, Daniel Scheinert", stars: "Michelle Yeoh, Stephanie Hsu, Jamie Lee Curtis", streaming: ["Paramount+", "Showtime"] },
+            { id: 78, title: "Aftersun", year: 2022, duration: "1h 42m", rating: "R", metascore: 95, imdb: 7.6, votes: "134K", synopsis: "Sophie reflects on the shared joy and private melancholy of a holiday she took with her father twenty years earlier. Memories real and imagined fill the gaps between as she tries to reconcile the father she knew with the man she didn't.", director: "Charlotte Wells", stars: "Paul Mescal, Frankie Corio, Celia Rowlson-Hall", streaming: ["Paramount+", "Showtime"] },
+            { id: 79, title: "The Tree of Life", year: 2011, duration: "2h 19m", rating: "PG-13", metascore: 85, imdb: 6.8, votes: "194K", synopsis: "The story of a family in Waco, Texas in 1956. The eldest son witnesses the loss of innocence and struggles with his parents' conflicting teachings.", director: "Terrence Malick", stars: "Brad Pitt, Sean Penn, Jessica Chastain", streaming: ["Max", "Apple TV"] },
+            { id: 80, title: "Volver", year: 2006, duration: "2h 1m", rating: "R", metascore: 84, imdb: 7.6, votes: "114K", synopsis: "After her death, a mother returns to her home town in order to fix the situations she couldn't resolve during her life.", director: "Pedro Almodóvar", stars: "Penélope Cruz, Carmen Maura, Lola Dueñas", streaming: ["Sony One", "Apple TV"] },
+            { id: 81, title: "Black Swan", year: 2010, duration: "1h 48m", rating: "R", metascore: 79, imdb: 8.0, votes: "899K", synopsis: "An insecure ballerina finally gets the role she has always dreamed of, but as the pressures mount her line between reality and illusion starts to blur.", director: "Darren Aronofsky", stars: "Natalie Portman, Mila Kunis, Vincent Cassel", streaming: ["Max", "Apple TV"] },
+            { id: 82, title: "The Act of Killing", year: 2012, duration: "1h 57m", rating: "Not Rated", metascore: 92, imdb: 8.2, votes: "45K", synopsis: "A documentary which challenges former Indonesian death-squad leaders to reenact their mass-killings in whichever cinematic genres they wish, including classic Hollywood crime scenarios and lavish musical numbers.", director: "Joshua Oppenheimer", stars: "Anwar Congo, Herman Koto, Syamsul Arifin", streaming: ["Apple TV", "Prime Video"] },
+            { id: 83, title: "Inside Llewyn Davis", year: 2013, duration: "1h 44m", rating: "R", metascore: 93, imdb: 7.4, votes: "173K", synopsis: "A week in the life of a young singer as he navigates the Greenwich Village folk scene of 1961.", director: "Ethan Coen, Joel Coen", stars: "Oscar Isaac, Carey Mulligan, John Goodman", streaming: ["Paramount+", "Apple TV"] },
+            { id: 84, title: "Melancholia", year: 2011, duration: "2h 15m", rating: "R", metascore: 81, imdb: 7.1, votes: "210K", synopsis: "Two sisters find their already strained relationship challenged as a mysterious new planet threatens to collide with Earth.", director: "Lars von Trier", stars: "Kirsten Dunst, Charlotte Gainsbourg, Kiefer Sutherland", streaming: ["Hulu", "Apple TV"] },
+            { id: 85, title: "Anchorman: The Legend of Ron Burgundy", year: 2004, duration: "1h 34m", rating: "PG-13", metascore: 63, imdb: 7.1, votes: "405K", synopsis: "In the 1970s, an anchorman's stint as San Diego's top-rated newsreader is challenged when an ambitious newswoman becomes his co-anchor.", director: "Adam McKay", stars: "Will Ferrell, Christina Applegate, Steve Carell", streaming: ["Paramount+", "Apple TV"] },
+            { id: 86, title: "Past Lives", year: 2023, duration: "1h 45m", rating: "PG-13", metascore: 94, imdb: 7.8, votes: "179K", synopsis: "Nora and Hae Sung, two deeply connected childhood friends, are wrested apart after Nora's family emigrates from South Korea. Twenty years later, they are reunited for one fateful week as they confront notions of love and destiny.", director: "Celine Song", stars: "Greta Lee, Teo Yoo, John Magaro", streaming: ["Paramount+", "Showtime"] },
+            { id: 87, title: "The Lord of the Rings: The Fellowship of the Ring", year: 2001, duration: "2h 58m", rating: "PG-13", metascore: 92, imdb: 8.9, votes: "2.2M", synopsis: "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.", director: "Peter Jackson", stars: "Elijah Wood, Ian McKellen, Orlando Bloom", streaming: ["Max", "Prime Video"] },
+            { id: 88, title: "The Gleaners & I", year: 2000, duration: "1h 22m", rating: "Not Rated", metascore: 86, imdb: 7.7, votes: "10K", synopsis: "Varda films and interviews gleaners in France in all forms, from those picking fields after the harvest to those scouring the dumpsters of Paris.", director: "Agnès Varda", stars: "François Wertheimer, Agnès Varda, Jean La Planche", streaming: ["Criterion Channel"] },
+            { id: 89, title: "Interstellar", year: 2014, duration: "2h 49m", rating: "PG-13", metascore: 74, imdb: 8.7, votes: "2.6M", synopsis: "In a dystopian future where Earth has become near-uninhabitable, a team of astronauts embark on a mission to find a new home for humanity.", director: "Christopher Nolan", stars: "Matthew McConaughey, Anne Hathaway, Jessica Chastain", streaming: ["Paramount+", "Prime Video"] },
+            { id: 90, title: "Frances Ha", year: 2012, duration: "1h 26m", rating: "R", metascore: 82, imdb: 7.4, votes: "104K", synopsis: "A New York woman apprentices for a dance company and throws herself headlong into her dreams, even as the possibility of realizing them dwindles.", director: "Noah Baumbach", stars: "Greta Gerwig, Mickey Sumner, Adam Driver", streaming: ["Max", "Criterion Channel"] },
+            { id: 91, title: "Fish Tank", year: 2009, duration: "2h 3m", rating: "Not Rated", metascore: 81, imdb: 7.3, votes: "69K", synopsis: "Everything changes for 15-year-old Mia when her mum brings home a new boyfriend.", director: "Andrea Arnold", stars: "Katie Jarvis, Michael Fassbender, Kierston Wareing", streaming: ["Criterion Channel", "Apple TV"] },
+            { id: 92, title: "Gladiator", year: 2000, duration: "2h 35m", rating: "R", metascore: 67, imdb: 8.5, votes: "1.9M", synopsis: "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.", director: "Ridley Scott", stars: "Russell Crowe, Joaquin Phoenix, Connie Nielsen", streaming: ["Paramount+", "Prime Video"] },
+            { id: 93, title: "Michael Clayton", year: 2007, duration: "1h 59m", rating: "R", metascore: 82, imdb: 7.2, votes: "185K", synopsis: "A law firm brings in its 'fixer' to remedy the situation after a lawyer has a breakdown while representing a chemical company that he knows is guilty in a multibillion-dollar class action suit.", director: "Tony Gilroy", stars: "George Clooney, Tilda Swinton, Tom Wilkinson", streaming: ["Apple TV", "Prime Video"] },
+            { id: 94, title: "Minority Report", year: 2002, duration: "2h 25m", rating: "PG-13", metascore: 80, imdb: 7.6, votes: "628K", synopsis: "The chief of a police unit that can accurately predict and prevent crimes goes on the run after he's accused of a future murder himself.", director: "Steven Spielberg", stars: "Tom Cruise, Colin Farrell, Samantha Morton", streaming: ["Paramount+", "Apple TV"] },
+            { id: 95, title: "The Worst Person in the World", year: 2021, duration: "2h 8m", rating: "R", metascore: 91, imdb: 7.7, votes: "133K", synopsis: "The chronicles of four years in the life of Julie, a young woman who navigates the troubled waters of her love life and struggles to find her career path, leading her to take a realistic look at who she really is.", director: "Joachim Trier", stars: "Renate Reinsve, Anders Danielsen Lie, Herbert Nordrum", streaming: ["Hulu", "Apple TV"] },
+            { id: 96, title: "Black Panther", year: 2018, duration: "2h 14m", rating: "PG-13", metascore: 88, imdb: 7.3, votes: "929K", synopsis: "T'Challa, heir to the hidden but advanced kingdom of Wakanda, must step forward to lead his people into a new future and must confront a challenger from his country's past.", director: "Ryan Coogler", stars: "Chadwick Boseman, Michael B. Jordan, Lupita Nyong'o", streaming: ["Disney+", "Apple TV"] },
+            { id: 97, title: "Gravity", year: 2013, duration: "1h 31m", rating: "PG-13", metascore: 96, imdb: 7.7, votes: "908K", synopsis: "Two astronauts must survive in space after their shuttle is hit by debris during a spacewalk.", director: "Alfonso Cuarón", stars: "Sandra Bullock, George Clooney, Ed Harris", streaming: ["Max", "Apple TV"] },
+            { id: 98, title: "Grizzly Man", year: 2005, duration: "1h 43m", rating: "R", metascore: 87, imdb: 7.7, votes: "69K", synopsis: "A devastating and heart-rending take on grizzly bear activists Timothy Treadwell and Amie Huguenard, who were killed in October of 2003 while living among grizzly bears in Alaska.", director: "Werner Herzog", stars: "Timothy Treadwell, Amie Huguenard, Werner Herzog", streaming: ["Prime Video", "Apple TV"] },
+            { id: 99, title: "Memories of Murder", year: 2003, duration: "2h 11m", rating: "Not Rated", metascore: 82, imdb: 8.1, votes: "276K", synopsis: "In a small Korean province in 1986, two detectives struggle with the case of multiple young women being found raped and murdered by an unknown culprit.", director: "Bong Joon Ho", stars: "Song Kang-ho, Kim Sang-kyung, Kim Roe-ha", streaming: ["Neon", "Apple TV"] },
+            { id: 100, title: "Superbad", year: 2007, duration: "1h 53m", rating: "R", metascore: 76, imdb: 7.6, votes: "705K", synopsis: "Two co-dependent high school seniors are forced to deal with separation anxiety after their plan to stage a booze-soaked party goes awry.", director: "Greg Mottola", stars: "Michael Cera, Jonah Hill, Christopher Mintz-Plasse", streaming: ["Paramount+", "Apple TV"] }
+        ];
+
+        // Load user data from localStorage
+        let userMovieData = JSON.parse(localStorage.getItem('cinevault_user_data')) || {};
+
+        function saveUserData() {
+            localStorage.setItem('cinevault_user_data', JSON.stringify(userMovieData));
+            updateWatchedCount();
+        }
+
+        function getMovieUserState(id) {
+            return userMovieData[id] || { watched: false, rating: 0, notes: '' };
+        }
+
+        function updateWatchedCount() {
+            const watchedTotal = moviesData.filter(m => getMovieUserState(m.id).watched).length;
+            document.getElementById('watched-count-badge').textContent = watchedTotal;
+        }
+
+        // View mode state ('grid' or 'list')
+        let currentView = 'grid';
+
+        // Poster image fallback generator using placehold.co with gorgeous cinematic colors
+        function getPosterUrl(movie) {
+            const colors = ['1e293b/cbd5e1', '0f172a/f8fafc', '312e81/e0e7ff', '14532d/dcfce7', '831843/fce7f3'];
+            const colorPair = colors[movie.id % colors.length];
+            return `https://placehold.co/400x600/${colorPair}?text=${encodeURIComponent(movie.title)}&font=montserrat`;
+        }
+
+        // Render movies list
+        function renderMovies() {
+            const container = document.getElementById('movies-container');
+            const emptyState = document.getElementById('empty-state');
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            const watchedFilter = document.getElementById('filter-watched').value;
+            const sortBy = document.getElementById('sort-by').value;
+
+            // Filter
+            let filtered = moviesData.filter(movie => {
+                const uState = getMovieUserState(movie.id);
+                // Watched filter
+                if (watchedFilter === 'watched' && !uState.watched) return false;
+                if (watchedFilter === 'unwatched' && uState.watched) return false;
+
+                // Search query
+                if (searchQuery) {
+                    const matchTitle = movie.title.toLowerCase().includes(searchQuery);
+                    const matchDirector = movie.director.toLowerCase().includes(searchQuery);
+                    const matchStars = movie.stars.toLowerCase().includes(searchQuery);
+                    if (!matchTitle && !matchDirector && !matchStars) return false;
+                }
+                return true;
+            });
+
+            // Sort
+            filtered.sort((a, b) => {
+                const stateA = getMovieUserState(a.id);
+                const stateB = getMovieUserState(b.id);
+                if (sortBy === 'rank-asc') return a.id - b.id;
+                if (sortBy === 'rating-desc') return b.imdb - a.imdb;
+                if (sortBy === 'year-desc') return b.year - a.year;
+                if (sortBy === 'year-asc') return a.year - b.year;
+                return 0;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            // Apply grid or list layout classes
+            if (currentView === 'grid') {
+                container.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-fade-in";
+                container.innerHTML = filtered.map(movie => {
+                    const uState = getMovieUserState(movie.id);
+                    return `
+                        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-xl hover:border-slate-700 transition-all duration-300 flex flex-col group">
+                            <!-- Poster Header -->
+                            <div class="relative aspect-[2/3] overflow-hidden bg-slate-950 cursor-pointer" onclick="openMovieModal(${movie.id})">
+                                <img src="${getPosterUrl(movie)}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" onerror="this.src='https://placehold.co/400x600/1e293b/ffffff?text=Movie'">
+                                <div class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur border border-slate-700/60 rounded-lg px-2.5 py-1 text-xs font-bold text-white shadow">
+                                    #${movie.id}
+                                </div>
+                                <div class="absolute top-3 right-3 flex space-x-1.5">
+                                    <button onclick="event.stopPropagation(); toggleWatched(${movie.id})" class="p-2 rounded-xl backdrop-blur transition-all ${uState.watched ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/40' : 'bg-slate-950/70 text-slate-300 hover:text-white'}" title="${uState.watched ? 'Watched' : 'Mark as watched'}">
+                                        <i class="fa-solid fa-check text-xs"></i>
+                                    </button>
+                                </div>
+                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-4 pt-10 flex items-end justify-between">
+                                    <div class="flex items-center space-x-1.5 text-amber-400 font-bold text-sm">
+                                        <i class="fa-solid fa-star"></i>
+                                        <span>${movie.imdb}</span>
+                                        <span class="text-xs text-slate-400 font-normal">(${movie.votes})</span>
+                                    </div>
+                                    <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${movie.year}</span>
+                                </div>
+                            </div>
+
+                            <!-- Body Content -->
+                            <div class="p-4 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h3 onclick="openMovieModal(${movie.id})" class="font-bold text-base text-white hover:text-indigo-400 cursor-pointer transition-colors line-clamp-1" title="${movie.title}">${movie.title}</h3>
+                                    <p class="text-xs text-slate-400 mt-1 line-clamp-1"><span class="text-slate-300 font-medium">Dir:</span> ${movie.director}</p>
+                                </div>
+
+                                <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                                    <div class="flex items-center space-x-1 text-xs text-indigo-400">
+                                        <i class="fa-solid fa-tv"></i>
+                                        <span class="truncate max-w-[130px]">${movie.streaming.slice(0, 2).join(', ')}</span>
+                                    </div>
+                                    ${uState.rating > 0 ? `
+                                        <div class="flex items-center space-x-1 bg-amber-500/10 border border-amber-500/30 rounded-lg px-2 py-0.5 text-xs text-amber-400 font-medium">
+                                            <i class="fa-solid fa-star text-[10px]"></i>
+                                            <span>${uState.rating}/10</span>
+                                        </div>
+                                    ` : `
+                                        <button onclick="openMovieModal(${movie.id})" class="text-xs text-slate-400 hover:text-white transition-colors">
+                                            <i class="fa-regular fa-star mr-1"></i>Rate
+                                        </button>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                // List view
+                container.className = "flex flex-col space-y-3 animate-fade-in";
+                container.innerHTML = filtered.map(movie => {
+                    const uState = getMovieUserState(movie.id);
+                    return `
+                        <div onclick="openMovieModal(${movie.id})" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex items-center justify-between hover:border-slate-700 transition-all cursor-pointer group shadow-lg">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-16 rounded-xl bg-slate-950 overflow-hidden flex-shrink-0 relative">
+                                    <img src="${getPosterUrl(movie)}" alt="${movie.title}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://placehold.co/100x150/1e293b/ffffff?text=Movie'">
+                                    <div class="absolute top-0 left-0 bg-slate-950/80 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-br">#${movie.id}</div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center space-x-2">
+                                        <h3 class="font-bold text-white group-hover:text-indigo-400 transition-colors text-base">${movie.title}</h3>
+                                        <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${movie.year}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-0.5"><span class="text-slate-300 font-medium">Director:</span> ${movie.director} &bull; <span class="text-slate-300 font-medium">Duration:</span> ${movie.duration}</p>
+                                    <div class="flex items-center space-x-3 mt-2">
+                                        <span class="text-xs text-amber-400 font-bold flex items-center"><i class="fa-solid fa-star mr-1"></i>${movie.imdb}</span>
+                                        <span class="text-xs text-indigo-400 flex items-center"><i class="fa-solid fa-tv mr-1"></i>${movie.streaming.join(', ')}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3" onclick="event.stopPropagation()">
+                                ${uState.rating > 0 ? `
+                                    <div class="hidden sm:flex items-center space-x-1 bg-amber-500/10 border border-amber-500/30 rounded-lg px-2.5 py-1 text-xs text-amber-400 font-medium">
+                                        <i class="fa-solid fa-star text-[10px]"></i>
+                                        <span>${uState.rating}/10</span>
+                                    </div>
+                                ` : ''}
+                                <button onclick="toggleWatched(${movie.id})" class="px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center space-x-1.5 ${uState.watched ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
+                                    <i class="fa-solid fa-check"></i>
+                                    <span class="hidden sm:inline">${uState.watched ? 'Watched' : 'Mark Watched'}</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Toggle watched status
+        function toggleWatched(movieId) {
+            if (!userMovieData[movieId]) {
+                userMovieData[movieId] = { watched: false, rating: 0, notes: '' };
+            }
+            userMovieData[movieId].watched = !userMovieData[movieId].watched;
+            saveUserData();
+            renderMovies();
+            
+            // If modal is open, update modal contents too
+            const modal = document.getElementById('movie-modal');
+            if (!modal.classList.contains('pointer-events-none')) {
+                // Find currently open movie ID from modal elements if needed, or re-render modal
+            }
+        }
+
+        // Open Movie Details Modal
+        function openMovieModal(movieId) {
+            const movie = moviesData.find(m => m.id === movieId);
+            if (!movie) return;
+            const uState = getMovieUserState(movieId);
+
+            const modalContent = document.getElementById('modal-content');
+            modalContent.innerHTML = `
+                <div class="relative">
+                    <!-- Close button -->
+                    <button onclick="closeMovieModal()" class="absolute top-4 right-4 z-10 w-9 h-9 bg-slate-950/80 hover:bg-slate-800 text-slate-300 hover:text-white rounded-full flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+
+                    <!-- Banner / Header -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 sm:p-8 bg-gradient-to-b from-slate-800/50 to-slate-900">
+                        <div class="md:col-span-4">
+                            <div class="aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-slate-700/60 bg-slate-950">
+                                <img src="${getPosterUrl(movie)}" alt="${movie.title}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x600/1e293b/ffffff?text=Movie'">
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-8 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 px-2.5 py-0.5 rounded-full text-xs font-bold">Rank #${movie.id}</span>
+                                    <span class="bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full text-xs font-semibold border border-slate-700">${movie.year}</span>
+                                    <span class="bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full text-xs font-semibold border border-slate-700">${movie.rating}</span>
+                                    <span class="bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full text-xs font-semibold border border-slate-700">${movie.duration}</span>
+                                </div>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">${movie.title}</h2>
+                                
+                                <div class="flex items-center space-x-4 mt-3">
+                                    <div class="flex items-center space-x-1.5 text-amber-400 font-bold text-sm bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-xl">
+                                        <i class="fa-solid fa-star"></i>
+                                        <span>IMDb: ${movie.imdb}</span>
+                                        <span class="text-xs text-slate-400 font-normal">(${movie.votes})</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5 text-emerald-400 font-bold text-sm bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-xl">
+                                        <i class="fa-solid fa-award"></i>
+                                        <span>Metascore: ${movie.metascore}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 space-y-3">
+                                <p class="text-sm text-slate-300 leading-relaxed">${movie.synopsis}</p>
+                                <div class="text-xs text-slate-400 space-y-1">
+                                    <p><strong class="text-slate-200">Director:</strong> ${movie.director}</p>
+                                    <p><strong class="text-slate-200">Stars:</strong> ${movie.stars}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive User Section -->
+                    <div class="p-6 sm:p-8 border-t border-slate-800 space-y-6">
+                        
+                        <!-- Streaming Platforms -->
+                        <div>
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2.5"><i class="fa-solid fa-tv mr-1.5 text-indigo-400"></i>Available Streaming Platforms</h4>
+                            <div class="flex flex-wrap gap-2">
+                                ${movie.streaming.map(platform => `
+                                    <span class="bg-indigo-600/10 border border-indigo-500/30 text-indigo-300 font-medium text-xs px-3 py-1.5 rounded-xl flex items-center space-x-1.5">
+                                        <i class="fa-solid fa-play text-[10px]"></i>
+                                        <span>${platform}</span>
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Watched & Rating Controls -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Watched Status</label>
+                                <button onclick="toggleModalWatched(${movie.id})" id="modal-watched-btn" class="w-full py-2.5 px-4 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-2 ${uState.watched ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
+                                    <i class="fa-solid fa-check"></i>
+                                    <span>${uState.watched ? 'Watched & Completed' : 'Mark as Watched'}</span>
+                                </button>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Your Personal Rating (1-10)</label>
+                                <select id="modal-rating-select" onchange="updateMovieRating(${movie.id}, this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="0">Select rating...</option>
+                                    ${[1,2,3,4,5,6,7,8,9,10].map(n => `<option value="${n}" ${uState.rating === n ? 'selected' : ''}>★ ${n} / 10</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Personal Notes -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2"><i class="fa-solid fa-pen-to-square mr-1 text-indigo-400"></i>Personal Notes & Thoughts</label>
+                            <textarea id="modal-notes-textarea" oninput="updateMovieNotes(${movie.id}, this.value)" placeholder="Add your personal review, favorite quotes, or thoughts about this movie..." rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none">${uState.notes || ''}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const modal = document.getElementById('movie-modal');
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.firstElementChild.classList.remove('scale-95');
+            modal.firstElementChild.classList.add('scale-100');
+        }
+
+        function closeMovieModal() {
+            const modal = document.getElementById('movie-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.firstElementChild.classList.remove('scale-100');
+            modal.firstElementChild.classList.add('scale-95');
+            renderMovies(); // Refresh main view counters
+        }
+
+        function toggleModalWatched(movieId) {
+            toggleWatched(movieId);
+            const uState = getMovieUserState(movieId);
+            const btn = document.getElementById('modal-watched-btn');
+            if (uState.watched) {
+                btn.className = "w-full py-2.5 px-4 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-2 bg-emerald-600 text-white shadow-md shadow-emerald-600/30";
+                btn.innerHTML = '<i class="fa-solid fa-check"></i><span>Watched & Completed</span>';
+            } else {
+                btn.className = "w-full py-2.5 px-4 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-2 bg-slate-800 text-slate-300 hover:bg-slate-700";
+                btn.innerHTML = '<i class="fa-solid fa-check"></i><span>Mark as Watched</span>';
+            }
+        }
+
+        function updateMovieRating(movieId, rating) {
+            if (!userMovieData[movieId]) {
+                userMovieData[movieId] = { watched: false, rating: 0, notes: '' };
+            }
+            userMovieData[movieId].rating = parseInt(rating);
+            saveUserData();
+        }
+
+        function updateMovieNotes(movieId, notes) {
+            if (!userMovieData[movieId]) {
+                userMovieData[movieId] = { watched: false, rating: 0, notes: '' };
+            }
+            userMovieData[movieId].notes = notes;
+            saveUserData();
+        }
+
+        // Event listeners & Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            updateWatchedCount();
+            renderMovies();
+
+            // Search listener
+            document.getElementById('search-input').addEventListener('input', renderMovies);
+            document.getElementById('filter-watched').addEventListener('change', renderMovies);
+            document.getElementById('sort-by').addEventListener('change', renderMovies);
+
+            // View toggles
+            document.getElementById('view-grid').addEventListener('click', () => {
+                currentView = 'grid';
+                document.getElementById('view-grid').className = "p-2.5 rounded-xl bg-indigo-600 text-white transition-all shadow-md shadow-indigo-600/20";
+                document.getElementById('view-list').className = "p-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-all";
+                renderMovies();
+            });
+
+            document.getElementById('view-list').addEventListener('click', () => {
+                currentView = 'list';
+                document.getElementById('view-list').className = "p-2.5 rounded-xl bg-indigo-600 text-white transition-all shadow-md shadow-indigo-600/20";
+                document.getElementById('view-grid').className = "p-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-all";
+                renderMovies();
+            });
+
+            document.getElementById('reset-filters').addEventListener('click', () => {
+                document.getElementById('search-input').value = '';
+                document.getElementById('filter-watched').value = 'all';
+                document.getElementById('sort-by').value = 'rank-asc';
+                renderMovies();
+            });
+
+            // Theme toggle
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                const html = document.documentElement;
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                } else {
+                    html.classList.add('dark');
+                }
+            });
+
+            // Close modal on click outside backdrop
+            document.getElementById('movie-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'movie-modal') {
+                    closeMovieModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
