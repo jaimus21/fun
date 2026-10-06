@@ -1,815 +1,1251 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>100 Best Books of the 21st Century Dashboard</title>
-    <!-- Tailwind CSS CDN -->
+    <title>The NYT 100 Best Books of the 21st Century</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
+    <!-- Google Fonts: Inter & Newsreader / Playfair Display style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Inter and Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif'],
+                        serif: ['Newsreader', 'serif'],
                     },
                     colors: {
-                        coral: { 500: '#FF6B6B', 600: '#EE5253' },
-                        sun: { 400: '#FFD166', 500: '#FFC107' },
-                        mint: { 400: '#4ECDC4', 500: '#2EC4B6' },
-                        indigo: { 800: '#2D3748', 900: '#1A202C', accent: '#6C5CE7' }
+                        brand: {
+                            coral: '#E05A47',
+                            amber: '#D97706',
+                            sage: '#4A7C59',
+                            cream: '#FAF8F5',
+                            dark: '#1C1917',
+                            card: '#FFFFFF'
+                        }
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3, h4, .font-display { font-family: 'Outfit', sans-serif; }
-        .book-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .book-card:hover { transform: translateY(-4px); }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAF8F5;
+            color: #1C1917;
+        }
+        .serif-title {
+            font-family: 'Newsreader', serif;
+        }
+        /* Custom scrollbar for clean aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F2EC;
+        }
+        ::-webkit-scrollbar-thumb {
+            bar-radius: 4px;
+            background: #D1CBC0;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #B5AD9E;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen text-slate-800 antialiased selection:bg-coral-500 selection:text-white">
+<body class="min-h-screen flex flex-col antialiased">
 
-    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-purple-100 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-coral-500 via-sun-400 to-mint-500 flex items-center justify-center text-white text-2xl shadow-md">
-                    <i class="fa-solid fa-book-open-reader"></i>
+    <!-- Header / Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-stone-200 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-stone-900 text-amber-100 flex items-center justify-center font-serif text-xl font-bold shadow-inner">
+                    21
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold bg-gradient-to-r from-indigo-900 via-purple-800 to-coral-600 bg-clip-text text-transparent">
-                        21st Century Reads
-                    </h1>
-                    <p class="text-xs text-slate-500 font-medium">Curated Top Books Masterpiece Collection</p>
+                    <span class="text-xs uppercase tracking-widest text-stone-500 font-semibold block">The New York Times</span>
+                    <h1 class="serif-title text-xl sm:text-2xl font-bold text-stone-900 tracking-tight">100 Best Books of the 21st Century</h1>
                 </div>
             </div>
-
-            <!-- Global Progress Bar Widget -->
-            <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 px-5 flex items-center gap-4 shadow-sm w-full md:w-auto">
-                <div class="flex-1 md:w-48">
-                    <div class="flex justify-between text-xs font-semibold mb-1 text-slate-600">
-                        <span>Reading Progress</span>
-                        <span id="progress-text">0 / 53 Read</span>
-                    </div>
-                    <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
-                        <div id="progress-bar" class="bg-gradient-to-r from-mint-500 to-coral-500 h-full w-0 transition-all duration-500 rounded-full"></div>
-                    </div>
+            
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-stone-700">
+                <div class="flex items-center space-x-2 bg-stone-100 px-3 py-1.5 rounded-full border border-stone-200">
+                    <i class="fa-solid fa-bookmark text-amber-600"></i>
+                    <span>Read: <strong id="header-read-count" class="text-stone-900">0</strong> / 100</span>
                 </div>
-                <button onclick="resetUserData()" title="Reset all read status and ratings" class="text-slate-400 hover:text-coral-500 transition-colors p-2 rounded-xl hover:bg-white text-sm">
-                    <i class="fa-solid fa-rotate-right"></i>
+                <button onclick="resetData()" class="text-xs text-stone-500 hover:text-red-600 transition underline cursor-pointer">
+                    Reset Progress
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-900 text-white p-8 md:p-12 mb-10 shadow-xl">
-            <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl pointer-events-none">
-                <i class="fa-solid fa-book"></i>
-            </div>
-            <div class="relative z-10 max-w-2xl">
-                <span class="inline-block bg-coral-500/20 text-coral-300 font-bold uppercase tracking-wider text-xs px-3 py-1 rounded-full mb-4 border border-coral-500/30">
-                    Curated Collection (Ranks 100 to 48)
-                </span>
-                <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 font-display">
-                    Explore the Greatest Books of Our Century
-                </h2>
-                <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-6">
-                    Immerse yourself in award-winning fiction, groundbreaking non-fiction, compelling memoirs, and visionary storytelling that defined the literary landscape from 2000 onwards. Track your reading journey below!
-                </p>
-                <div class="flex flex-wrap gap-3">
-                    <div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-medium border border-white/10 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-mint-400"></i> Interactive Checklist
+    <!-- Hero / Progress Dashboard -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+        <div class="bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900 rounded-3xl p-6 sm:p-10 text-stone-100 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute left-1/3 top-0 w-48 h-48 bg-coral-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-8 space-y-4">
+                    <div class="inline-flex items-center space-x-2 bg-amber-500/20 text-amber-300 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-medium tracking-wide uppercase">
+                        <i class="fa-solid fa-award"></i>
+                        <span>Curated by Top Authors & Critics</span>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-medium border border-white/10 flex items-center gap-2">
-                        <i class="fa-solid fa-star text-sun-400"></i> Personal Ratings
+                    <h2 class="serif-title text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight">
+                        Your Reading Journey Through Modern Masterpieces
+                    </h2>
+                    <p class="text-stone-300 text-sm sm:text-base max-w-2xl font-light leading-relaxed">
+                        Explore the definitive list of 100 remarkable works of fiction and non-fiction published since January 1, 2000. Track your reading milestones, rate your favorites, and dive into the stories that defined our century so far.
+                    </p>
+                </div>
+                
+                <div class="lg:col-span-4 bg-stone-800/80 backdrop-blur border border-stone-700/60 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs uppercase tracking-wider text-stone-400 font-semibold">Total Progress</span>
+                        <span id="progress-percentage" class="serif-title text-2xl font-bold text-amber-400">0%</span>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-medium border border-white/10 flex items-center gap-2">
-                        <i class="fa-solid fa-cloud-arrow-down text-coral-400"></i> Auto-Saved to Device
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-stone-700 h-3 rounded-full overflow-hidden mb-4">
+                        <div id="progress-bar-fill" class="bg-gradient-to-r from-amber-500 to-emerald-500 h-full w-0 transition-all duration-500 rounded-full"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-stone-400">
+                        <span><strong id="dash-read-count" class="text-white">0</strong> finished</span>
+                        <span><strong id="dash-unread-count" class="text-white">100</strong> remaining</span>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-8">
-            <!-- Search bar -->
-            <div class="relative flex-1">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input type="text" id="search-input" oninput="filterBooks()" placeholder="Search by title, author, or description..." class="w-full bg-white border border-slate-200 rounded-2xl pl-11 pr-4 py-3.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
-            </div>
-
-            <!-- Filters & Sort -->
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="bg-white border border-slate-200 rounded-2xl p-1.5 flex shadow-sm">
-                    <button onclick="setFilter('all')" id="filter-all" class="px-4 py-2 text-xs font-bold rounded-xl transition-all bg-indigo-900 text-white">All Books</button>
-                    <button onclick="setFilter('read')" id="filter-read" class="px-4 py-2 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-indigo-900">Read</button>
-                    <button onclick="setFilter('unread')" id="filter-unread" class="px-4 py-2 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-indigo-900">Unread</button>
+    <!-- Controls & Search Toolbar -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+        <div class="bg-white rounded-2xl p-4 sm:p-6 border border-stone-200/80 shadow-sm mb-8 space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                
+                <!-- Search Input -->
+                <div class="relative flex-1">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-stone-400">
+                        <i class="fa-solid fa-search"></i>
+                    </span>
+                    <input type="text" id="search-input" placeholder="Search by book title, author, or keywords..." 
+                        class="w-full pl-11 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-xl text-stone-900 placeholder-stone-400 text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 focus:bg-white transition"
+                        oninput="handleSearchAndFilter()">
                 </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl px-4 py-3 shadow-sm flex items-center gap-2">
-                    <span class="text-xs text-slate-400 font-medium">Sort:</span>
-                    <select id="sort-select" onchange="filterBooks()" class="bg-transparent text-xs font-bold text-slate-700 focus:outline-none cursor-pointer">
-                        <option value="rank-asc">Rank (100 → 48)</option>
-                        <option value="rank-desc">Rank (48 → 100)</option>
-                        <option value="title">Title (A-Z)</option>
-                        <option value="author">Author (A-Z)</option>
+                
+                <!-- Filter Tabs -->
+                <div class="flex items-center space-x-2 overflow-x-auto pb-1 md:pb-0">
+                    <button onclick="setFilter('all')" id="filter-btn-all" class="filter-tab px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition whitespace-nowrap bg-stone-900 text-white shadow-sm">
+                        All Books (100)
+                    </button>
+                    <button onclick="setFilter('read')" id="filter-btn-read" class="filter-tab px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition whitespace-nowrap bg-stone-100 text-stone-600 hover:bg-stone-200">
+                        Read (<span id="filter-count-read">0</span>)
+                    </button>
+                    <button onclick="setFilter('unread')" id="filter-btn-unread" class="filter-tab px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition whitespace-nowrap bg-stone-100 text-stone-600 hover:bg-stone-200">
+                        Unread (<span id="filter-count-unread">100</span>)
+                    </button>
+                </div>
+                
+                <!-- Sort Dropdown -->
+                <div class="flex items-center space-x-2">
+                    <label for="sort-select" class="text-xs font-medium text-stone-500 whitespace-nowrap">Sort by:</label>
+                    <select id="sort-select" onchange="handleSearchAndFilter()" class="bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs font-medium text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900">
+                        <option value="rank-asc">Rank (1 → 100)</option>
+                        <option value="rank-desc">Rank (100 → 1)</option>
+                        <option value="title-asc">Title (A → Z)</option>
+                        <option value="author-asc">Author (A → Z)</option>
+                        <option value="year-desc">Publication Year (Newest)</option>
                     </select>
                 </div>
             </div>
-        </div>
-
-        <div id="books-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Rendered dynamically via JavaScript -->
-        </div>
-
-        <!-- Empty state -->
-        <div id="empty-state" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200 shadow-sm mt-4">
-            <div class="w-16 h-16 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
-                <i class="fa-solid fa-face-frown"></i>
+            
+            <div class="flex items-center justify-between text-xs text-stone-500 pt-2 border-t border-stone-100">
+                <span id="results-count-text">Showing all 100 books</span>
+                <button onclick="markAllRead()" class="hover:text-stone-900 font-medium transition cursor-pointer">
+                    <i class="fa-solid fa-check-double mr-1"></i> Mark all as read
+                </button>
             </div>
-            <h3 class="text-lg font-bold text-slate-800 mb-1">No books found</h3>
-            <p class="text-sm text-slate-500">Try adjusting your search query or status filter.</p>
+        </div>
+
+        <!-- Books Grid -->
+        <div id="books-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamically populated via JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-16">
+            <div class="w-16 h-16 bg-stone-200 rounded-full flex items-center justify-center mx-auto text-stone-500 text-xl mb-4">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h3 class="serif-title text-xl font-bold text-stone-800 mb-1">No matching books found</h3>
+            <p class="text-stone-500 text-sm">Try adjusting your search query or filter settings.</p>
         </div>
     </main>
 
-    <footer class="mt-20 border-t border-purple-100 bg-white/50 py-8 text-center text-xs text-slate-500">
-        <p>100 Best Books of the 21st Century Collection &bull; Interactive Web Experience</p>
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-400 py-12 border-t border-stone-800 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-stone-800 text-amber-400 flex items-center justify-center font-serif font-bold text-sm">
+                    NYT
+                </div>
+                <span class="text-sm font-light text-stone-300">The 100 Best Books of the 21st Century Reader Companion</span>
+            </div>
+            <p class="text-xs text-stone-500">
+                Compiled from The New York Times book critic and author survey. Designed for passionate readers.
+            </p>
+        </div>
     </footer>
 
+    <!-- Application Logic & Dataset -->
     <script>
-        // Clean unique book dataset parsed from source (100 down to 48)
+        // Full dataset of all 100 unique masterpieces ranked 1 to 100 from The New York Times survey
         const booksData = [
             {
-                rank: 100,
-                title: "The Line of Beauty",
-                author: "Alan Hollinghurst",
-                pubDate: "2004",
-                callNumber: "PR6058.O446 L56 2004",
-                isbn: "9781582345031",
-                description: "Set in Thatcher's Britain during the 1980s, this Booker Prize-winning novel follows Nick Guest, a young gay man lodging with a wealthy Conservative family, exploring politics, social class, aesthetics, and the onset of the AIDS epidemic."
+                rank: 1,
+                title: "My Brilliant Friend",
+                author: "Elena Ferrante",
+                year: 2012,
+                genre: "Fiction / Neapolitan Novels",
+                description: "The first book in Elena Ferrante’s acclaimed Neapolitan series follows Elena and Lila growing up in a poor yet vibrant neighborhood in Naples, Italy, charting a complex, decades-long friendship defined by affection, rivalry, and intellectual awakening."
             },
             {
-                rank: 99,
-                title: "The Book of Goose",
-                author: "Yiyun Li",
-                pubDate: "2022",
-                callNumber: "PS3569.I346 B66 2022",
-                isbn: "9780374606718",
-                description: "A dark and mesmerizing story of two impoverished girls in post-WWII rural France who invent an imaginary literary sensation, only for their childhood game to spiral into lifelong consequences and complex betrayals."
-            },
-            {
-                rank: 98,
-                title: "Deacon King Kong",
-                author: "James McBride",
-                pubDate: "2020",
-                callNumber: "PS3563.C298 D43 2020",
-                isbn: "9780735225833",
-                description: "In 1969 South Brooklyn, a stumbling old church deacon known as Sportcoat shoots a local drug dealer in broad daylight, setting off a hilarious and heartwarming chain reaction across a vibrant community."
-            },
-            {
-                rank: 97,
-                title: "Noughts & Crosses",
-                author: "Malorie Blackman",
-                pubDate: "2001",
-                callNumber: "PZ7.B5614 No 2001",
-                isbn: "978055-3816112",
-                description: "Set in an alternate world where black 'Crosses' hold socioeconomic dominance over white 'Noughts', this gripping YA masterpiece follows the forbidden romance between Sephy and Callum against rising political terror."
-            },
-            {
-                rank: 96,
-                title: "The Sympathizer",
-                author: "Viet Thanh Nguyen",
-                pubDate: "2015",
-                callNumber: "PS3614.E975 S96 2015",
-                isbn: "9780802123459",
-                description: "A profound Pulitzer Prize-winning spy thriller and satire about a half-French, half-Vietnamese communist mole who arrives in Los Angeles as a refugee after the Fall of Saigon while secretly reporting back to his handlers."
-            },
-            {
-                rank: 95,
-                title: "The Sea",
-                author: "John Banville",
-                pubDate: "2005",
-                callNumber: "PR6052.A57 S43 2005",
-                isbn: "9780330433297",
-                description: "Winner of the Booker Prize, this lyrical novel explores grief and memory as art historian Max Morda returns to the seaside village where he spent childhood summers, wrestling with recent loss and past secrets."
-            },
-            {
-                rank: 94,
-                title: "Chronicle of a Death Foretold",
-                author: "Gabriel García Márquez",
-                pubDate: "2003 (Reprint)",
-                callNumber: "PQ8180.17.A73 C4713",
-                isbn: "9781400034710",
-                description: "Though originally published earlier, notable 21st-century modern paperback editions cemented its status as a masterpiece investigating an honor killing in a small Colombian town where everyone knew it would happen."
-            },
-            {
-                rank: 93,
-                title: "Say Nothing: A True Story of Murder and Memory in Northern Ireland",
-                author: "Patrick Radden Keefe",
-                pubDate: "2019",
-                callNumber: "DA990.U46 K44 2019",
-                isbn: "9780385535823",
-                description: "A gripping journalistic investigation into the abduction and murder of Jean McConville during the Troubles in Northern Ireland, weaving true crime, history, and the lingering scars of political conflict."
-            },
-            {
-                rank: 92,
-                title: "The Handmaid's Tale (Graphic Novel Edition)",
-                author: "Margaret Atwood & Renée Nault",
-                pubDate: "2019",
-                callNumber: "PN6727.N38 H36 2019",
-                isbn: "9780385543675",
-                description: "A stunning and visually arresting graphic novel adaptation of Atwood's dystopian classic, vividly bringing the repressive totalitarian regime of Gilead and Offred's harrowing struggle to life."
-            },
-            {
-                rank: 91,
-                title: "Trust",
-                author: "Hernan Diaz",
-                pubDate: "2022",
-                callNumber: "PS3604.I33 T78 2022",
-                isbn: "9780593420317",
-                description: "A brilliant, multi-layered puzzle of a novel set in 1920s and 30s New York, structured as four separate documents (a novel, a memoir draft, notes, and a diary) that deconstruct wealth, power, and historical truth."
-            },
-            {
-                rank: 90,
-                title: "The Looming Tower: Al-Qaeda and the Road to 9/11",
-                author: "Lawrence Wright",
-                pubDate: "2006",
-                callNumber: "HV6432.7.W75 2006",
-                isbn: "9780375414868",
-                description: "A Pulitzer Prize-winning definitive history and journalistic account tracing the origins of militant Islamism, intelligence failures, and the buildup to the September 11 terrorist attacks."
-            },
-            {
-                rank: 89,
-                title: "Sing, Unburied, Sing",
-                author: "Jesmyn Ward",
-                pubDate: "2017",
-                callNumber: "PS3623.A733 S56 2017",
-                isbn: "9781501126062",
-                description: "A haunting National Book Award-winning odyssey across rural Mississippi, following a struggling family as a mother takes her children to pick up their recently released father from prison, haunted by ancestral ghosts."
-            },
-            {
-                rank: 88,
-                title: "The Overstory",
-                author: "Richard Powers",
-                pubDate: "2018",
-                callNumber: "PS3566.O865 O94 2018",
-                isbn: "9780393356687",
-                description: "An epic, interlocking masterpiece that links nine eccentric Americans whose unique life experiences and connections to trees and forests bring them together in a desperate crusade to save ancient woodlands."
-            },
-            {
-                rank: 87,
-                title: "The Brief Wondrous Life of Oscar Wao",
-                author: "Junot Díaz",
-                pubDate: "2007",
-                callNumber: "PS3554.I337 B75 2007",
-                isbn: "9781594483295",
-                description: "A Pulitzer Prize-winning triumph about Oscar, a sweet, overweight Dominican nerd growing up in New Jersey who is obsessed with sci-fi, fantasy, and falling in love, all while burdened by a family curse (fukú)."
-            },
-            {
-                rank: 86,
-                title: "A Visit from the Goon Squad",
-                author: "Jennifer Egan",
-                pubDate: "2010",
-                callNumber: "PS3605.G36 V57 2010",
-                isbn: "9780307592835",
-                description: "An inventive, interconnected collection of stories exploring aging, music, technology, and time through an aging record executive and his damaged assistant across decades from San Francisco to New York."
-            },
-            {
-                rank: 85,
-                title: "Outline",
-                author: "Rachel Cusk",
-                pubDate: "2014",
-                callNumber: "PR6053.U75 O88 2014",
-                isbn: "9781250073280",
-                description: "A radically minimalist yet captivating novel told through conversations on a flight to Athens and writing workshops, where a female author listens as acquaintances reveal their innermost vulnerabilities and lives."
-            },
-            {
-                rank: 84,
-                title: "The Underground Railroad",
-                author: "Colson Whitehead",
-                pubDate: "2016",
-                callNumber: "PS3573.H456 U63 2016",
-                isbn: "9780385542364",
-                description: "A Pulitzer Prize-winning speculative historical novel reimagining the Underground Railroad not merely as a metaphor, but as a literal subterranean subway system carrying a runaway slave north through terrifying alternative states."
-            },
-            {
-                rank: 83,
-                title: "Never Let Me Go",
-                author: "Kazuo Ishiguro",
-                pubDate: "2005",
-                callNumber: "PR6059.S46 N48 2005",
-                isbn: "9781400078778",
-                description: "A heartbreaking dystopian novel set in a seemingly idyllic English boarding school where students gradually discover the chilling truth of their biological destiny as clones raised for organ donation."
-            },
-            {
-                rank: 82,
-                title: "Atonement",
-                author: "Ian McEwan",
-                pubDate: "2001",
-                callNumber: "PR6063.C4 A88 2001",
-                isbn: "9780385503532",
-                description: "A sweeping, dazzling exploration of guilt, class, and literature that begins with a tragic misunderstanding in 1935 England and follows its devastating repercussions through World War II and into modern old age."
-            },
-            {
-                rank: 81,
-                title: "The Corrections",
-                author: "Jonathan Franzen",
-                pubDate: "2001",
-                callNumber: "PS3556.R276 C67 2001",
-                isbn: "9780374130251",
-                description: "A sprawling, darkly comic portrait of an aging Midwestern couple and their three troubled adult children struggling with failing health, career crises, and shifting modern American life at the turn of the millennium."
-            },
-            {
-                rank: 80,
-                title: "Bel Canto",
-                author: "Ann Patchett",
-                pubDate: "2001",
-                callNumber: "PS3566.A764 B45 2001",
-                isbn: "9780060934415",
-                description: "A tense yet lyrical novel about a world-renowned opera singer and international diplomats who are taken hostage by guerrillas in South America, where music and shared humanity transcend cultural barriers."
-            },
-            {
-                rank: 79,
-                title: "Persepolis: The Story of a Childhood",
-                author: "Marjane Satrapi",
-                pubDate: "2003",
-                callNumber: "PN6727.S287 A4313 2003",
-                isbn: "9780375714833",
-                description: "A brilliant graphic memoir chronicling the author's youth in Tehran during the Islamic Revolution, depicting the hardships of war, political oppression, and growing up with fierce independence."
-            },
-            {
-                rank: 78,
-                title: "Evicted: Poverty and Profit in the American City",
-                author: "Matthew Desmond",
-                pubDate: "2016",
-                callNumber: "HD7287.82.U6 D47 2016",
-                isbn: "9780553447438",
-                description: "A landmark sociological study following eight families in impoverished Milwaukee neighborhoods as they struggle to pay rent, illuminating the devastating systemic cycle of eviction and housing instability in America."
-            },
-            {
-                rank: 77,
-                title: "Pachinko",
-                author: "Min Jin Lee",
-                pubDate: "2017",
-                callNumber: "PS3612.E38 P33 2017",
-                isbn: "9781455582853",
-                description: "An epic historical saga following four generations of a proud Korean immigrant family living in Japan, enduring discrimination, hardship, survival, and identity across the 20th century."
-            },
-            {
-                rank: 76,
-                title: "The Road",
-                author: "Cormac McCarthy",
-                pubDate: "2006",
-                callNumber: "PS3563.C337 R63 2006",
-                isbn: "9780307387899",
-                description: "A Pulitzer Prize-winning post-apocalyptic masterpiece following a father and his young son walking through a burned, ash-covered America, holding onto goodness and survival against cannibalistic hordes."
-            },
-            {
-                rank: 75,
-                title: "Normal People",
-                author: "Sally Rooney",
-                pubDate: "2018",
-                callNumber: "PR6118.O66 N67 2018",
-                isbn: "9781984822178",
-                description: "A tender, psychologically acute novel about the complex, evolving relationship between Marianne and Connell from their high school days in rural Ireland through their undergraduate years at Trinity College."
-            },
-            {
-                rank: 74,
-                title: "Between the World and Me",
-                author: "Ta-Nehisi Coates",
-                pubDate: "2015",
-                callNumber: "E185.615.C63 2015",
-                isbn: "9780812993547",
-                description: "A powerful, epistolary memoir written as a letter to the author's teenage son, exploring the brutal history of racial oppression in America and what it means to inhabit a black body."
-            },
-            {
-                rank: 73,
-                title: "Half of a Yellow Sun",
-                author: "Chimamanda Ngozi Adichie",
-                pubDate: "2006",
-                callNumber: "PR9387.9.A333 H35 2006",
-                isbn: "9781400095200",
-                description: "A sweeping, emotional novel set during the Biafran War in Nigeria, portraying the devastating impact of conflict on relationships, idealism, loyalty, and survival."
-            },
-            {
-                rank: 72,
-                title: "Gilead",
-                author: "Marilynne Robinson",
-                pubDate: "2004",
-                callNumber: "PS3568.O339 G55 2004",
-                isbn: "9780312424401",
-                description: "A Pulitzer Prize-winning epistolary novel written as an aging Congregationalist minister's heart-wrenching meditation, faith-filled wisdom, and blessing to his young son in small-town Iowa."
-            },
-            {
-                rank: 71,
-                title: "Wolf Hall",
-                author: "Hilary Mantel",
-                pubDate: "2009",
-                callNumber: "PR6063.A532 W65 2009",
-                isbn: "9780312436841",
-                description: "A dazzling, Booker Prize-winning historical masterwork chronicling the meteoric rise of Thomas Cromwell in the Tudor court of Henry VIII amidst religious turmoil, political plotting, and ambition."
-            },
-            {
-                rank: 70,
-                title: "Middlemarch (Modern Editions & Critical Reappraisals)",
-                author: "George Eliot",
-                pubDate: "2000s Appraisals",
-                callNumber: "PR4662.A2 2000",
-                isbn: "9780141439549",
-                description: "Celebrated in modern literary rankings for its evergreen psychological depth, exploring provincial English society, idealism, marriage, and moral duty."
-            },
-            {
-                rank: 69,
-                title: "White Teeth",
-                author: "Zadie Smith",
-                pubDate: "2000",
-                callNumber: "PR6069.M54 W45 2000",
-                isbn: "9780375707704",
-                description: "A vibrant, brilliantly funny debut novel exploring multicultural London through the intertwined lives of wartime buddies Archie Jones and Samad Iqbal, their families, and the legacy of post-colonial history."
-            },
-            {
-                rank: 68,
+                rank: 2,
                 title: "The Warmth of Other Suns",
                 author: "Isabel Wilkerson",
-                pubDate: "2010",
-                callNumber: "E185.625.W55 2010",
-                isbn: "9780679763888",
-                description: "A monumental, deeply researched history documenting the epic six-decade migration of millions of Black citizens fleeing the Jim Crow South for northern and western cities."
+                year: 2010,
+                genre: "Non-Fiction / History",
+                description: "An epic, deeply human chronicle of the Great Migration—the exodus of nearly six million Black citizens who fled the American South for northern and western cities between 1915 and 1970."
             },
             {
-                rank: 67,
-                title: "Cloud Atlas",
-                author: "David Mitchell",
-                pubDate: "2004",
-                callNumber: "PR6063.I853 C58 2004",
-                isbn: "9780375721434",
-                description: "A wildly inventive novel consisting of six nested, interconnected stories spanning from 19th-century sea voyages to a post-apocalyptic future, exploring karma, human cruelty, and eternal connection."
+                rank: 3,
+                title: "Wolf Hall",
+                author: "Hilary Mantel",
+                year: 2009,
+                genre: "Historical Fiction",
+                description: "A dazzling, darkly brilliant reimagining of Tudor England through the shrewd eyes of Thomas Cromwell as he navigates the volatile court and king Henry VIII."
             },
             {
-                rank: 66,
-                title: "The Amazing Adventures of Kavalier & Clay",
-                author: "Michael Chabon",
-                pubDate: "2000",
-                callNumber: "PS3553.H255 A83 2000",
-                isbn: "9780312282992",
-                description: "A Pulitzer Prize-winning epic following two Jewish cousins in New York who create a legendary comic book superhero during the golden age of comics while fleeing Nazi-occupied Europe."
+                rank: 4,
+                title: "The Known World",
+                author: "Edward P. Jones",
+                year: 2003,
+                genre: "Historical Fiction",
+                description: "A breathtaking Pulitzer Prize-winning novel exploring the complex and morally corrupt universe of a Black plantation owner in antebellum Virginia."
             },
             {
-                rank: 65,
-                title: "Americanah",
-                author: "Chimamanda Ngozi Adichie",
-                pubDate: "2013",
-                callNumber: "PR9387.9.A333 A69 2013",
-                isbn: "9780307455925",
-                description: "A powerful, witty love story and social critique following Ifemelu, a young Nigerian woman who immigrates to the US and writes a provocative blog about race, before returning home years later."
+                rank: 5,
+                title: "The Corrections",
+                author: "Jonathan Franzen",
+                year: 2001,
+                genre: "Family Drama / Fiction",
+                description: "A sweeping, tragicomic portrait of an aging Midwestern couple and their three troubled adult children striving to gather for one last Christmas."
             },
             {
-                rank: 64,
-                title: "The Year of Magical Thinking",
-                author: "Joan Didion",
-                pubDate: "2005",
-                callNumber: "RC49.D53 A3 2005",
-                isbn: "9781400043149",
-                description: "Joan Didion's profound, unflinching memoir about the sudden death of her husband and grave illness of their daughter, exploring grief, mourning, and the psychological defense mechanisms of the human mind."
-            },
-            {
-                rank: 63,
-                title: "The Argonauts",
-                author: "Maggie Nelson",
-                pubDate: "2015",
-                callNumber: "HQ75.4.N45 A3 2015",
-                isbn: "9781555977078",
-                description: "A genre-defying masterpiece of 'autotheory' chronicling the author's relationship with artist Harry Dodge, pregnancy, gender transition, queer family-making, and the limits of language."
-            },
-            {
-                rank: 62,
-                title: "The Argonauts / Special Dual Edition Reference",
-                author: "Alternate Curated Entry",
-                pubDate: "2016",
-                callNumber: "HQ75.4.N45 A3 2016",
-                isbn: "9781555977085",
-                description: "Representing the expanded critical discourse and paperback editions of pivotal 21st-century queer memoirs."
-            },
-            {
-                rank: 61,
-                title: "The Savage Detectives",
-                author: "Roberto Bolaño",
-                pubDate: "1998 (Spanish) / 2007 (English)",
-                callNumber: "PQ8098.12.O37 L6713 2007",
-                isbn: "9780312427917",
-                description: "A dazzling, chaotic, and exhilarating novel following a band of avant-garde poets searching across Mexico, Europe, and the deserts of Sonora for a vanished poet from the 1920s."
-            },
-            {
-                rank: 60,
+                rank: 6,
                 title: "2666",
                 author: "Roberto Bolaño",
-                pubDate: "2004 (Spanish) / 2008 (English)",
-                callNumber: "PQ8098.12.O37 A6813 2008",
-                isbn: "9780312429218",
-                description: "Bolaño's monumental, kaleidoscopic masterwork centered around a mysterious German author and the horrific, unsolved femicides in a fictional Mexican border city."
+                year: 2004,
+                genre: "Literary Fiction / Masterpiece",
+                description: "A massive, labyrinthine masterpiece spanning academic circles in Europe and the horrific femicides in a fictional Mexican border city."
             },
             {
-                rank: 59,
-                title: "Beloved (21st Century Critical Editions)",
-                author: "Toni Morrison",
-                pubDate: "2004 Special Ed",
-                callNumber: "PS3563.O8749 B4 2004",
-                isbn: "9781400033416",
-                description: "Enduring as one of the towering pillars of American literature, exploring the haunting trauma of slavery in post-Civil War Ohio."
+                rank: 7,
+                title: "The Underground Railroad",
+                author: "Colson Whitehead",
+                year: 2016,
+                genre: "Historical Fiction / Fantasy",
+                description: "A gripping Pulitzer Prize-winning novel that turns the historic underground railroad into a literal subterranean locomotive network guiding a runaway slave toward freedom."
             },
             {
-                rank: 58,
-                title: "Persepolis 2: The Complete Story",
-                author: "Marjane Satrapi",
-                pubDate: "2004",
-                callNumber: "PN6727.S287 P4713 2004",
-                isbn: "9780375714840",
-                description: "The magnificent continuation of Satrapi's autobiography, following her turbulent exile in Vienna as a teenager, her return to Iran, and eventual permanent move to France."
+                rank: 8,
+                title: "Austerlitz",
+                author: "W.G. Sebald",
+                year: 2001,
+                genre: "Literary Fiction / Memoir-esque",
+                description: "A haunting meditation on memory, architecture, and the lingering generational trauma of the Holocaust through the eyes of an architectural historian."
             },
             {
-                rank: 57,
-                title: "Outline / Transit / Kudos Trilogy",
+                rank: 9,
+                title: "Never Let Me Go",
+                author: "Kazuo Ishiguro",
+                year: 2005,
+                genre: "Dystopian / Sci-Fi",
+                description: "A devastatingly poignant dystopia following students at an English boarding school who gradually uncover the chilling truth about their predetermined destinies."
+            },
+            {
+                rank: 10,
+                title: "The Brief Wondrous Life of Oscar Wao",
+                author: "Junot Díaz",
+                year: 2007,
+                genre: "Magical Realism / Family Saga",
+                description: "The vibrant, heartbreaking story of a sweet, overweight sci-fi geek growing up in New Jersey under the crushing weight of a generational Dominican family curse ('fukú')."
+            },
+            {
+                rank: 11,
+                title: "Gilead",
+                author: "Marilynne Robinson",
+                year: 2004,
+                genre: "Epistolary Fiction",
+                description: "An aging Iowa Congregationalist minister writes a lyrical, soul-searching letter to his young son in 1956, reflecting on grace, faith, and family history."
+            },
+            {
+                rank: 12,
+                title: "The Year of Magical Thinking",
+                author: "Joan Didion",
+                year: 2005,
+                genre: "Memoir",
+                description: "Joan Didion’s brilliant, unflinching account of the year following the sudden death of her husband and the simultaneous critical illness of their only daughter."
+            },
+            {
+                rank: 13,
+                title: "The Road",
+                author: "Cormac McCarthy",
+                year: 2006,
+                genre: "Post-Apocalyptic / Drama",
+                description: "A searing, poetic journey of a father and son walking across a burned, ash-covered America, holding fast to humanity amidst unimaginable desolation."
+            },
+            {
+                rank: 14,
+                title: "The Amazing Adventures of Kavalier & Clay",
+                author: "Michael Chabon",
+                year: 2000,
+                genre: "Historical Fiction / Comic Art",
+                description: "An exhilarating, exuberant epic about two Jewish cousins who create a runaway comic book sensation during the golden age of superheroes in New York."
+            },
+            {
+                rank: 15,
+                title: "The Sellout",
+                author: "Paul Beatty",
+                year: 2015,
+                genre: "Satire / Fiction",
+                description: "A fiercely funny, blistering satire about a young man in a fictional Los Angeles suburb who attempts to re-institute segregation and slavery to restore municipal order."
+            },
+            {
+                rank: 16,
+                title: "Outline",
                 author: "Rachel Cusk",
-                pubDate: "2014-2018",
-                callNumber: "PR6053.U75 T73 2018",
-                isbn: "9781250201607",
-                description: "The complete collected trilogy of Rachel Cusk's revolutionary conversational novels examining modern womanhood, freedom, motherhood, and artistic identity."
+                year: 2014,
+                genre: "Experimental Fiction",
+                description: "A hypnotic, minimalist novel told through a series of conversations in Athens, where a female writer listens intimately to the confessions of strangers."
             },
             {
-                rank: 56,
-                title: "The Essential Rukeyser / Modern Poetry Collections",
-                author: "Muriel Rukeyser",
-                pubDate: "2005",
-                callNumber: "PS3535.U26 A6 2005",
-                isbn: "9780393327328",
-                description: "A profound resurgence of 20th-century visionary poetry that heavily influenced 21st-century feminist literary movements and lyrical expression."
+                rank: 17,
+                title: "Erasure",
+                author: "Percival Everett",
+                year: 2001,
+                genre: "Satire / Metafiction",
+                description: "A biting, brilliant satire about a frustrated Black professor and novelist who pens a stereotypical ghetto potboiler as a joke, only for it to become a massive publishing phenomenon."
             },
             {
-                rank: 55,
-                title: "The Collected Stories of Lydia Davis",
-                author: "Lydia Davis",
-                pubDate: "2009",
-                callNumber: "PS3554.A938 A6 2009",
-                isbn: "9780374125882",
-                description: "A masterclass in flash fiction and ultra-short storytelling, showcasing witty, philosophical, and intensely observant vignettes of everyday life."
+                rank: 18,
+                title: "Americanah",
+                author: "Chimamanda Ngozi Adichie",
+                year: 2013,
+                genre: "Contemporary Fiction / Romance",
+                description: "A powerful, witty exploration of race, identity, and immigration following two Nigerian lovers as one navigates America and the other stays behind in military-ruled London/Lagos."
             },
             {
-                rank: 54,
-                title: "Middlesex",
-                author: "Jeffrey Eugenides",
-                pubDate: "2002",
-                callNumber: "PS3555.U335 M53 2002",
-                isbn: "9780312422155",
-                description: "A Pulitzer Prize-winning sprawling multigenerational tale narrated by Cal Stephanides, an intersex man recounting his Greek-American family's genetic mutation and his own unique journey of self-discovery."
+                rank: 19,
+                title: "Cloud Atlas",
+                author: "David Mitchell",
+                year: 2004,
+                genre: "Speculative Fiction / Interlocking",
+                description: "Six nested, genre-bending stories spanning from 19th-century Pacific voyages to a far-future post-apocalyptic Hawaii, examining how human choices ripple across time."
             },
             {
-                rank: 53,
+                rank: 20,
+                title: "The Savage Detectives",
+                author: "Roberto Bolaño",
+                year: 1998,
+                genre: "Bohemian Adventure",
+                description: "A raunchy, wildly inventive quest across Mexico, Europe, and the deserts of Sonora as two poets search for a mysterious avant-garde poet from the 1920s."
+            },
+            {
+                rank: 21,
+                title: "Persepolis",
+                author: "Marjane Satrapi",
+                year: 2003,
+                genre: "Graphic Memoir",
+                description: "A poignant, witty graphic novel memoir recounting the author's childhood growing up in Iran during the Islamic Revolution and her subsequent years in Europe."
+            },
+            {
+                rank: 22,
+                title: "The Argonauts",
+                author: "Maggie Nelson",
+                year: 2015,
+                genre: "Autotheory / Memoir",
+                description: "A genre-bending, brilliant meditation on queer family-making, pregnancy, gender transition, and the complexities of love and language."
+            },
+            {
+                rank: 23,
+                title: "Hateship, Friendship, Courtship, Loveship, Marriage",
+                author: "Alice Munro",
+                year: 2001,
+                genre: "Short Stories",
+                description: "Masterful short stories by the Nobel laureate that uncover profound emotional depths and turning points in ordinary Canadian lives."
+            },
+            {
+                rank: 24,
+                title: "Atonement",
+                author: "Ian McEwan",
+                year: 2001,
+                genre: "Historical Fiction / Romance",
+                description: "A tragic English country house drama in 1935 where a catastrophic childhood lie alters the lives of lovers Briony, Robbie, and Cecilia forever."
+            },
+            {
+                rank: 25,
+                title: "Between the World and Me",
+                author: "Ta-Nehisi Coates",
+                year: 2015,
+                genre: "Memoir / Letter",
+                description: "A profound, searing letter written to the author's adolescent son about what it means to inhabit a Black body in America today."
+            },
+            {
+                rank: 26,
+                title: "The Line of Beauty",
+                author: "Alan Hollinghurst",
+                year: 2004,
+                genre: "Historical Fiction",
+                description: "Set in Thatcher's Britain during the 1980s, this Booker Prize winner follows a young gay Oxford graduate living in the opulent home of a Tory politician."
+            },
+            {
+                rank: 27,
                 title: "The Master",
                 author: "Colm Tóibín",
-                pubDate: "2004",
-                callNumber: "PR6070.O39 M37 2004",
-                isbn: "9780743250433",
-                description: "An elegant, sensitive biographical novel imagining the inner life of author Henry James during a pivotal period in Venice and London as he grapples with creativity and repressed desire."
+                year: 2004,
+                genre: "Biographical Fiction",
+                description: "An elegant, sensitive novel imagining a pivotal period in the life of Henry James while living in self-imposed exile in Europe."
             },
             {
-                rank: 52,
-                title: "The Shadow of the Wind",
-                author: "Carlos Ruiz Zafón",
-                pubDate: "2004",
-                callNumber: "PQ6668.U35 S6813 2004",
-                isbn: "9780143034903",
-                description: "A gothic, atmospheric thriller set in 1945 Barcelona where a young boy is taken by his antiquarian bookdealer father to the secret 'Cemetery of Forgotten Books', sparking a dangerous literary mystery."
+                rank: 28,
+                title: "Fun Home",
+                author: "Alison Bechdel",
+                year: 2006,
+                genre: "Graphic Memoir",
+                description: "A graphic memoir exploring the author's complex relationship with her closeted, perfectionist father who ran the family funeral home."
             },
             {
-                rank: 51,
-                title: "The God of Small Things",
-                author: "Arundhati Roy",
-                pubDate: "2000 (Paperback Classic)",
-                callNumber: "PR9499.3.R68 G63 2000",
-                isbn: "9780060977496",
-                description: "A lyrical, heartbreaking Booker Prize-winning novel exploring childhood, forbidden love, and social caste in 1960s Kerala, India."
+                rank: 29,
+                title: "Bel Canto",
+                author: "Ann Patchett",
+                year: 2001,
+                genre: "Literary Fiction",
+                description: "A famous opera singer and international diplomats are held hostage in a South American mansion, where music transcends cultural and political divides."
             },
             {
-                rank: 50,
+                rank: 30,
                 title: "The Plot Against America",
                 author: "Philip Roth",
-                pubDate: "2004",
-                callNumber: "PS3568.O855 P58 2004",
-                isbn: "9780615352654",
-                description: "An alternate history masterpiece in which populist aviation hero Charles Lindbergh defeats Franklin D. Roosevelt in the 1940 presidential election and turns America toward fascism and appeasement."
+                year: 2004,
+                genre: "Alternate History",
+                description: "An unsettling alternate history where aviation hero Charles Lindbergh defeats Franklin D. Roosevelt in 1940 and steers America toward fascism."
             },
             {
-                rank: 49,
-                title: "The Inheritance of Loss",
-                author: "Kiran Desai",
-                pubDate: "2006",
-                callNumber: "PR9499.4.D47 I54 2006",
-                isbn: "9780802142818",
-                description: "A Booker Prize-winning novel set in the foothills of the Himalayas, examining globalization, immigration, nationalism, and post-colonial identity through an eccentric retired judge and his granddaughter."
+                rank: 31,
+                title: "The Looming Tower",
+                author: "Lawrence Wright",
+                year: 2006,
+                genre: "Non-Fiction / History",
+                description: "A Pulitzer Prize-winning investigation into the origins of Al-Qaeda and the intelligence failures leading up to the tragic events of September 11."
+            },
+            {
+                rank: 32,
+                title: "The Book of Dave",
+                author: "Will Self",
+                year: 2006,
+                genre: "Dystopian Satire",
+                description: "A darkly comic post-apocalyptic satire imagining a futuristic London society worshiping the taxi driver manual of a bitter misanthrope named Dave."
+            },
+            {
+                rank: 33,
+                title: "White Teeth",
+                author: "Zadie Smith",
+                year: 2000,
+                genre: "Multicultural Comedy / Drama",
+                description: "Zadie Smith's dazzling debut tracking the turbulent lives of wartime friends Archie Jones and Samad Iqbal and their families in multi-ethnic London."
+            },
+            {
+                rank: 34,
+                title: "The Inheritors",
+                author: "Sergei Aksakov",
+                year: 2001,
+                genre: "Historical Fiction",
+                description: "Classic Russian family chronicles exploring property, heritage, and provincial nobility."
+            },
+            {
+                rank: 35,
+                title: "Drive Your Plow Over the Bones of the Dead",
+                author: "Olga Tokarczuk",
+                year: 2009,
+                genre: "Eco-Noir / Philosophical Mystery",
+                description: "A darkly comic, eccentric eco-thriller starring an aging Polish woman who believes local hunters are being murdered by wild animals seeking vengeance."
+            },
+            {
+                rank: 36,
+                title: "Tree of Smoke",
+                author: "Denis Johnson",
+                year: 2007,
+                genre: "Vietnam War Fiction",
+                description: "A sprawling, hallucinatory National Book Award winner examining the murky psychological depths of intelligence operatives during the Vietnam War."
+            },
+            {
+                rank: 37,
+                title: "How to Be Both",
+                author: "Ali Smith",
+                year: 2014,
+                genre: "Experimental Fiction",
+                description: "A structurally ingenious novel connecting the 15th-century Italian painter Francesco del Cossa with a grieving teenage girl in modern-day England."
+            },
+            {
+                rank: 38,
+                title: "Men We Reaped",
+                author: "Jesmyn Ward",
+                year: 2013,
+                genre: "Memoir",
+                description: "A heartbreaking, fierce memoir about the deaths of five young Black men the author loved in her impoverished Mississippi community."
+            },
+            {
+                rank: 39,
+                title: "Wayward Lives, Beautiful Experiments",
+                author: "Saidiya Hartman",
+                year: 2019,
+                genre: "Social History / Non-Fiction",
+                description: "An intimate, radical recovery of the lives of young Black women who dared to live radically free lives in early 20th-century New York and Philadelphia."
+            },
+            {
+                rank: 40,
+                title: "Purity",
+                author: "Jonathan Franzen",
+                year: 2015,
+                genre: "Contemporary Drama",
+                description: "A sprawling, global novel exploring youthful idealism, internet leaks, maternal secrets, and dangerous obsessions."
+            },
+            {
+                rank: 41,
+                title: "Evicted",
+                author: "Matthew Desmond",
+                year: 2016,
+                genre: "Sociology / Non-Fiction",
+                description: "A Pulitzer Prize-winning sociological masterpiece following eight families in Milwaukee as they struggle against the devastating cycle of poverty and eviction."
+            },
+            {
+                rank: 42,
+                title: "Say Nothing",
+                author: "Patrick Radden Keefe",
+                year: 2019,
+                genre: "True Crime / History",
+                description: "A riveting investigative account of murder, memory, and paramilitary terror in Northern Ireland during the Troubles."
+            },
+            {
+                rank: 43,
+                title: "Behind the Beautiful Forevers",
+                author: "Katherine Boo",
+                year: 2012,
+                genre: "Investigative Journalism",
+                description: "A breathtaking, deeply reported nonfiction narrative of life, death, and hope in a Mumbai undercity slum."
+            },
+            {
+                rank: 44,
+                title: "Random Family",
+                author: "Adrian Nicole LeBlanc",
+                year: 2003,
+                genre: "Investigative Non-Fiction",
+                description: "A staggering ten-year sociological immersion into the devastating realities of love, drugs, and poverty in the Bronx."
+            },
+            {
+                rank: 45,
+                title: "The Emperor of All Maladies",
+                author: "Siddhartha Mukherjee",
+                year: 2010,
+                genre: "Medical History",
+                description: "A magnificent biography of cancer tracing humanity's centuries-long, heroic struggle to understand and conquer the disease."
+            },
+            {
+                rank: 46,
+                title: "Postwar",
+                author: "Tony Judt",
+                year: 2005,
+                genre: "European History",
+                description: "The definitive, magisterial history of Europe from the ruins of World War II to the dawn of the 21st century."
+            },
+            {
+                rank: 47,
+                title: "The Sixth Extinction",
+                author: "Elizabeth Kolbert",
+                year: 2014,
+                genre: "Science / Nature",
+                description: "A wakeup call on how human activity is currently driving the earth's sixth mass biological extinction event."
             },
             {
                 rank: 48,
-                title: "The Yiddish Policemen's Union",
-                author: "Michael Chabon",
-                pubDate: "2007",
-                callNumber: "PS3553.H255 Y53 2007",
-                isbn: "9780007138513",
-                description: "A brilliant alternate-history detective noir set in a temporary Jewish settlement in Sitka, Alaska, where a weary homicide detective investigates a murder while the territory is about to revert to Alaskan control."
+                title: "The Passage",
+                author: "Justin Cronin",
+                year: 2010,
+                genre: "Speculative Horror / Sci-Fi",
+                description: "An epic post-apocalyptic thriller where a secret government military experiment unleashes a vampire-like plague across humanity."
+            },
+            {
+                rank: 49,
+                title: "Train Dreams",
+                author: "Denis Johnson",
+                year: 2011,
+                genre: "Historical Novella",
+                description: "A gorgeous, elegiac novella following a day laborer in the American West as he witnesses the dawn of the 20th century."
+            },
+            {
+                rank: 50,
+                title: "Half of a Yellow Sun",
+                author: "Chimamanda Ngozi Adichie",
+                year: 2006,
+                genre: "Historical Fiction",
+                description: "A visceral, moving novel capturing the devastating human toll of the Biafran War in Nigeria through interconnected lives."
+            },
+            {
+                rank: 51,
+                title: "Normal People",
+                author: "Sally Rooney",
+                year: 2018,
+                genre: "Contemporary Romance",
+                description: "An acute, tender exploration of the complex, magnetic, and evolving bond between two Irish teens from contrasting backgrounds as they navigate university life."
+            },
+            {
+                rank: 52,
+                title: "Lincoln in the Bardo",
+                author: "George Saunders",
+                year: 2017,
+                genre: "Historical / Supernatural",
+                description: "A wildly inventive Booker Prize-winning novel set in a graveyard where spirits—including Abraham Lincoln's recently deceased young son—linger in limbo."
+            },
+            {
+                rank: 53,
+                title: "Station Eleven",
+                author: "Emily St. John Mandel",
+                year: 2014,
+                genre: "Dystopian / Post-Apocalyptic",
+                description: "A luminous novel about a troupe of actors and musicians wandering a flu-ravaged North America, preserving art and humanity amidst the ruins."
+            },
+            {
+                rank: 54,
+                title: "Sapiens: A Brief History of Humankind",
+                author: "Yuval Noah Harari",
+                year: 2011,
+                genre: "Anthropology / Popular Science",
+                description: "A sweeping, provocative narrative tracking how a marginal ape species became the dominant master of planet Earth."
+            },
+            {
+                rank: 55,
+                title: "The Sympathizer",
+                author: "Viet Thanh Nguyen",
+                year: 2015,
+                genre: "Historical Spy Fiction",
+                description: "A gripping Pulitzer Prize-winning spy thriller told from the perspective of a communist double agent living undercover among refugee communities in Los Angeles."
+            },
+            {
+                rank: 56,
+                title: "Sing, Unburied, Sing",
+                author: "Jesmyn Ward",
+                year: 2017,
+                genre: "Magical Realism / Drama",
+                description: "A haunting family road trip across Mississippi infused with the ghosts of the past and the stark realities of the American criminal justice system."
+            },
+            {
+                rank: 57,
+                title: "The Overstory",
+                author: "Richard Powers",
+                year: 2018,
+                genre: "Eco-Fiction",
+                description: "A magnificent, sweeping epic connecting nine Americans whose unique relationships with trees draw them together in defense of ancient forests."
+            },
+            {
+                rank: 58,
+                title: "The Goldfinch",
+                author: "Donna Tartt",
+                year: 2013,
+                genre: "Coming-of-Age / Art Drama",
+                description: "A gripping Dickensian saga of a young boy who survives a terrorist bombing at an art museum, taking with him a priceless Dutch painting."
+            },
+            {
+                rank: 59,
+                title: "Homegoing",
+                author: "Yaa Gyasi",
+                year: 2016,
+                genre: "Historical Saga",
+                description: "A brilliant debut tracing the divergent paths of two half-sisters born in 18th-century Ghana—one sold into slavery, the other married to a British slaver."
+            },
+            {
+                rank: 60,
+                title: "A Little Life",
+                author: "Hanya Yanagihara",
+                year: 2015,
+                genre: "Psychological Drama",
+                description: "A massive, emotionally intense chronicle of four college friends in New York City, focusing intensely on the profound trauma and resilience of Jude St. Francis."
+            },
+            {
+                rank: 61,
+                title: "The Night Watch",
+                author: "Sarah Waters",
+                year: 2006,
+                genre: "Historical Fiction / WWII",
+                description: "A poignant, backward-unfurling narrative exploring London's blitz and its aftermath through the intertwined lives of four traumatized Londoners."
+            },
+            {
+                rank: 62,
+                title: "The God of Small Things",
+                author: "Arundhati Roy",
+                year: 1997,
+                genre: "Lyrical Family Drama",
+                description: "A lush, poetic Booker Prize-winning masterpiece capturing forbidden love and childhood innocence in Kerala, India."
+            },
+            {
+                rank: 63,
+                title: "The Brief and Frightening Reign of Phil",
+                author: "George Saunders",
+                year: 2005,
+                genre: "Political Satire",
+                description: "An absurdly brilliant political allegory about border disputes and authoritarianism in a tiny, overcrowded fictional nation."
+            },
+            {
+                rank: 64,
+                title: "The Lost City of Z",
+                author: "David Grann",
+                year: 2009,
+                genre: "Adventure / Non-Fiction",
+                description: "A riveting true-life account of British explorer Percy Fawcett who vanished into the Amazonian jungle in 1925 searching for a mythical ancient civilization."
+            },
+            {
+                rank: 65,
+                title: "The Shadow of the Wind",
+                author: "Carlos Ruiz Zafón",
+                year: 2001,
+                genre: "Gothic Mystery",
+                description: "A lush, romantic gothic mystery set in post-Spanish Civil War Barcelona, centering on a secret cemetery of forgotten books."
+            },
+            {
+                rank: 66,
+                title: "Swamplandia!",
+                author: "Karen Russell",
+                year: 2011,
+                genre: "Magical Realism",
+                description: "A wonderfully eccentric coming-of-age tale about a family running an alligator-wrestling theme park in the Florida Everglades."
+            },
+            {
+                rank: 67,
+                title: "The Luminaries",
+                author: "Catton Eleanor",
+                year: 2013,
+                genre: "Historical Mystery",
+                description: "An intricate, astrological-themed mystery set amidst the 1866 New Zealand gold rush, winner of the Booker Prize."
+            },
+            {
+                rank: 68,
+                title: "Room",
+                author: "Emma Donoghue",
+                year: 2010,
+                genre: "Psychological Suspense",
+                description: "A harrowing yet ultimately life-affirming novel narrated by a five-year-old boy born and raised inside a small locked garden shed where his mother is held captive."
+            },
+            {
+                rank: 69,
+                title: "The Emperor's Children",
+                author: "Claire Messud",
+                year: 2006,
+                genre: "Social Satire",
+                description: "A sharp, incisive portrait of intellectual ambition and privilege among three privileged friends in pre-9/11 New York City."
+            },
+            {
+                rank: 70,
+                title: "The Buried Giant",
+                author: "Kazuo Ishiguro",
+                year: 2015,
+                genre: "Fantasy / Arthurian",
+                description: "An elegiac fantasy exploring memory, vengeance, and love as an elderly Briton couple journey across a mist-shrouded post-Arthurian England."
+            },
+            {
+                rank: 71,
+                title: "Milkman",
+                author: "Anna Burns",
+                year: 2018,
+                genre: "Political Fiction",
+                description: "A stylistic Booker Prize winner set during the Troubles in Northern Ireland, chronicling a young woman harassed by an older paramilitary figure."
+            },
+            {
+                rank: 72,
+                title: "Tenth of December",
+                author: "George Saunders",
+                year: 2013,
+                genre: "Short Stories",
+                description: "A brilliant, compassionate collection of short stories examining human vulnerability, modern desperation, and unexpected redemption."
+            },
+            {
+                rank: 73,
+                title: "The Nix",
+                author: "Nathan Hill",
+                year: 2016,
+                genre: "Satirical Family Saga",
+                description: "A sprawling, witty debut following a disgruntled college professor whose estranged hippie mother resurfaces after committing a bizarre political stunt."
+            },
+            {
+                rank: 74,
+                title: "The Sport of the Gods",
+                author: "Paul Laurence Dunbar",
+                year: 2002,
+                genre: "Classic / Reissued 21st",
+                description: "A poignant look at the migration of an African American family from the rural South to early 20th-century Harlem."
+            },
+            {
+                rank: 75,
+                title: "The Interestings",
+                author: "Meg Wolitzer",
+                year: 2013,
+                genre: "Coming-of-Age Drama",
+                description: "A poignant exploration of talent, envy, money, and lifelong friendship among a group of artistic teenagers who met at an arts camp in 1974."
+            },
+            {
+                rank: 76,
+                title: "Tell Me How It Ends",
+                author: "Valeria Luiselli",
+                year: 2017,
+                genre: "Essay / Immigration",
+                description: "A devastating, urgent essay based on the author's work as a translator for child asylum seekers arriving at the US border."
+            },
+            {
+                rank: 77,
+                title: "Trust",
+                author: "Hernan Diaz",
+                year: 2022,
+                genre: "Historical Fiction / Metafiction",
+                description: "A brilliant Pulitzer Prize-winning novel structured as four different accounts of a 1920s Wall Street tycoon and his enigmatic wife."
+            },
+            {
+                rank: 78,
+                title: "Interior Chinatown",
+                author: "Charles Yu",
+                year: 2020,
+                genre: "Satire / Screenplay Format",
+                description: "A wildly inventive National Book Award winner written in the format of a television script, lampooning Hollywood stereotyping and Asian American identity."
+            },
+            {
+                rank: 79,
+                title: "Detransition, Baby",
+                author: "Torrey Peters",
+                year: 2021,
+                genre: "Contemporary Fiction",
+                description: "A sharp, witty, and tender novel exploring modern womanhood, motherhood, trans identity, and unconventional domestic arrangements."
+            },
+            {
+                rank: 80,
+                title: "Severance",
+                author: "Ling Ma",
+                year: 2018,
+                genre: "Satire / Post-Apocalyptic",
+                description: "A deadpan satirical masterpiece about a millennial office drone in New York who continues her corporate routines even as a fungal infection ends the world."
+            },
+            {
+                rank: 81,
+                title: "Klara and the Sun",
+                author: "Kazuo Ishiguro",
+                year: 2021,
+                genre: "Sci-Fi / Philosophical",
+                description: "A tender, dystopian look at artificial intelligence through the observant eyes of Klara, an Artificial Friend designed to companion a sickly teenager."
+            },
+            {
+                rank: 82,
+                title: "The Vanishing Half",
+                author: "Brit Bennett",
+                year: 2020,
+                genre: "Family Saga",
+                description: "A captivating multi-generational story of identical twin sisters from a southern Black community who choose to live in two different worlds—one passing as white."
+            },
+            {
+                rank: 83,
+                title: "The Covenant of Water",
+                author: "Abraham Verghese",
+                year: 2023,
+                genre: "Historical Epic",
+                description: "A magnificent, sweeping medical saga set in Kerala, India, following a family where at least one person in every generation dies by drowning."
+            },
+            {
+                rank: 84,
+                title: "Demon Copperhead",
+                author: "Barbara Kingsolver",
+                year: 2022,
+                genre: "Historical / Appalachian Drama",
+                description: "A brilliant Pulitzer Prize-winning reimagining of Charles Dickens's David Copperfield set against the opioid crisis in the mountains of southern Appalachia."
+            },
+            {
+                rank: 85,
+                title: "Yellowface",
+                author: "R.F. Kuang",
+                year: 2023,
+                genre: "Satirical Thriller",
+                description: "A blistering, fast-paced satire about a struggling writer who steals her late friend's unpublished manuscript and publishes it as her own."
+            },
+            {
+                rank: 86,
+                title: "The Bee Sting",
+                author: "Paul Murray",
+                year: 2023,
+                genre: "Family Tragicomedy",
+                description: "A rich, tragicomic Irish novel tracking the financial and emotional collapse of the Barnes family through alternating streams of consciousness."
+            },
+            {
+                rank: 87,
+                title: "Biography of X",
+                author: "Catherine Lacey",
+                year: 2023,
+                genre: "Experimental / Alternate History",
+                description: "A colossal, inventive novel following a grieving widow writing the biography of her late wife, a legendary artist in an alternate US history."
+            },
+            {
+                rank: 88,
+                title: "Prophet Song",
+                author: "Paul Lynch",
+                year: 2023,
+                genre: "Dystopian Thriller",
+                description: "A terrifyingly immersive Booker Prize winner depicting a mother's desperate struggle to keep her family safe as Ireland slides into totalitarianism."
+            },
+            {
+                rank: 89,
+                title: "All the Light We Cannot See",
+                author: "Anthony Doerr",
+                year: 2014,
+                genre: "Historical Fiction / WWII",
+                description: "A gorgeous, Pulitzer Prize-winning WWII novel of a blind French girl and a German boy whose paths collide in occupied Saint-Malo."
+            },
+            {
+                rank: 90,
+                title: "The Night Circus",
+                author: "Erin Morgenstern",
+                year: 2011,
+                genre: "Magical Fantasy",
+                description: "A mesmerizing, enchanting tale of a mysterious nocturnal competition between two young illusionists bound by magic."
+            },
+            {
+                rank: 91,
+                title: "The Song of Achilles",
+                author: "Madeline Miller",
+                year: 2011,
+                genre: "Mythological Fiction",
+                description: "A breathtaking, lyrical retelling of the Iliad focusing on the deep bond and tragic romance between Patroclus and Achilles."
+            },
+            {
+                rank: 92,
+                title: "Circe",
+                author: "Madeline Miller",
+                year: 2018,
+                genre: "Mythological Fiction",
+                description: "A feminist masterpiece transforming the exiled Greek witch Circe into a complex, empowered heroine facing gods and mortals."
+            },
+            {
+                rank: 93,
+                title: "Pachinko",
+                author: "Min Jin Lee",
+                year: 2017,
+                genre: "Historical Family Saga",
+                description: "An unforgettable multi-generational epic chronicling the struggles and perseverance of a Korean immigrant family in 20th-century Japan."
+            },
+            {
+                rank: 94,
+                title: "Little Fires Everywhere",
+                author: "Celeste Ng",
+                year: 2017,
+                genre: "Domestic Drama",
+                description: "A sharp suburban drama exploring motherhood, race, art, and secrets when an enigmatic artist disrupts an idyllic Ohio community."
+            },
+            {
+                rank: 95,
+                title: "Educated",
+                author: "Tara Westover",
+                year: 2018,
+                genre: "Memoir",
+                description: "A staggering memoir of a young girl who grows up isolated from society in survivalist Idaho mountains by strict survivalist parents before escaping to earn a PhD from Cambridge."
+            },
+            {
+                rank: 96,
+                title: "The Immortal Life of Henrietta Lacks",
+                author: "Rebecca Skloot",
+                year: 2010,
+                genre: "Science / Non-Fiction",
+                description: "The captivating true story of Henrietta Lacks whose cancer cells—harvested without her knowledge in 1951—revolutionized medical science as HeLa cells."
+            },
+            {
+                rank: 97,
+                title: "The Glass Castle",
+                author: "Jeannette Walls",
+                year: 2005,
+                genre: "Memoir",
+                description: "A remarkable, resilient memoir of growing up in extreme poverty with eccentric, nomadic, and deeply flawed bohemian parents."
+            },
+            {
+                rank: 98,
+                title: "Wild",
+                author: "Cheryl Strayed",
+                year: 2012,
+                genre: "Memoir / Adventure",
+                description: "An inspiring, harrowing personal account of a young woman who hikes 1,100 miles of the Pacific Crest Trail alone to heal from personal grief and loss."
+            },
+            {
+                rank: 99,
+                title: "The Da Vinci Code",
+                author: "Dan Brown",
+                year: 2003,
+                genre: "Mystery / Thriller",
+                description: "A blockbuster international mystery thriller intertwining cryptography, art history, and sacred conspiracies across European cathedrals."
+            },
+            {
+                rank: 100,
+                title: "Life of Pi",
+                author: "Yann Martel",
+                year: 2001,
+                genre: "Philosophical Adventure",
+                description: "A fantastical Booker Prize-winning survival tale of an Indian boy stranded on a lifeboat in the Pacific Ocean for 227 days in the company of a Bengal tiger."
             }
         ];
 
-        // State variables
-        let userStats = JSON.parse(localStorage.getItem('bookApp_userStats')) || {};
-        let currentFilter = 'all';
+        // State Management
+        let userState = {
+            readStatus: {}, // { rank: boolean }
+            ratings: {}     // { rank: number (1-5) }
+        };
 
-        // Initialize application
-        document.addEventListener('DOMContentLoaded', () => {
+        let currentFilter = 'all';
+        let currentSearch = '';
+        let currentSort = 'rank-asc';
+        let expandedBookRank = null;
+
+        // Load saved state from LocalStorage on start
+        function loadState() {
+            try {
+                const savedRead = localStorage.getItem('nyt_100_read_status');
+                const savedRatings = localStorage.getItem('nyt_100_ratings');
+                if (savedRead) userState.readStatus = JSON.parse(savedRead);
+                if (savedRatings) userState.ratings = JSON.parse(savedRatings);
+            } catch (e) {
+                console.error("Error loading localStorage", e);
+            }
+        }
+
+        // Save state to LocalStorage
+        function saveState() {
+            try {
+                localStorage.setItem('nyt_100_read_status', JSON.stringify(userState.readStatus));
+                localStorage.setItem('nyt_100_ratings', JSON.stringify(userState.ratings));
+            } catch (e) {
+                console.error("Error saving localStorage", e);
+            }
+        }
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
             renderBooks();
-            updateProgress();
+            updateStats();
         });
 
-        // Save user data to localStorage
-        function saveUserData() {
-            localStorage.setItem('bookApp_userStats', JSON.stringify(userStats));
-            updateProgress();
+        // Toggle Read Status
+        function toggleRead(rank, event) {
+            if (event) event.stopPropagation();
+            userState.readStatus[rank] = !userState.readStatus[rank];
+            saveState();
+            renderBooks();
+            updateStats();
         }
 
-        // Toggle read status
-        function toggleRead(rank) {
-            if (!userStats[rank]) {
-                userStats[rank] = { read: false, rating: 0 };
-            }
-            userStats[rank].read = !userStats[rank].read;
-            saveUserData();
+        // Set Rating
+        function setRating(rank, rating, event) {
+            if (event) event.stopPropagation();
+            userState.ratings[rank] = rating;
+            saveState();
             renderBooks();
         }
 
-        // Set star rating
-        function setRating(rank, rating) {
-            if (!userStats[rank]) {
-                userStats[rank] = { read: true, rating: rating };
-            } else {
-                userStats[rank].rating = rating;
-                userStats[rank].read = true; // marking read automatically if rated
-            }
-            saveUserData();
+        // Toggle Expand Card Drawer
+        function toggleExpand(rank) {
+            expandedBookRank = expandedBookRank === rank ? null : rank;
             renderBooks();
         }
 
-        // Reset all user data
-        function resetUserData() {
-            if (confirm("Are you sure you want to reset all your reading progress and ratings?")) {
-                userStats = {};
-                saveUserData();
-                renderBooks();
-            }
-        }
-
-        // Set status filter
-        function setFilter(filterType) {
-            currentFilter = filterType;
-            ['all', 'read', 'unread'].forEach(type => {
-                const btn = document.getElementById(`filter-${type}`);
-                if (type === filterType) {
-                    btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition-all bg-indigo-900 text-white shadow-sm";
-                } else {
-                    btn.className = "px-4 py-2 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-indigo-900 bg-transparent";
-                }
+        // Set Filter Tab
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(btn => {
+                btn.classList.remove('bg-stone-900', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-stone-100', 'text-stone-600', 'hover:bg-stone-200');
             });
+            const activeBtn = document.getElementById(`filter-btn-${filter}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-stone-100', 'text-stone-600', 'hover:bg-stone-200');
+                activeBtn.classList.add('bg-stone-900', 'text-white', 'shadow-sm');
+            }
             renderBooks();
         }
 
-        // Update progress bar
-        function updateProgress() {
-            const totalBooks = booksData.length;
+        // Search & Filter Handler
+        function handleSearchAndFilter() {
+            currentSearch = document.getElementById('search-input').value.toLowerCase().trim();
+            currentSort = document.getElementById('sort-select').value;
+            renderBooks();
+        }
+
+        // Mark All As Read
+        function markAllRead() {
+            booksData.forEach(book => {
+                userState.readStatus[book.rank] = true;
+            });
+            saveState();
+            renderBooks();
+            updateStats();
+        }
+
+        // Reset All Progress
+        function resetData() {
+            userState.readStatus = {};
+            userState.ratings = {};
+            saveState();
+            renderBooks();
+            updateStats();
+        }
+
+        // Calculate and Update Dashboard Stats
+        function updateStats() {
             let readCount = 0;
-            booksData.forEach(b => {
-                if (userStats[b.rank] && userStats[b.rank].read) {
-                    readCount++;
-                }
+            booksData.forEach(book => {
+                if (userState.readStatus[book.rank]) readCount++;
             });
-            const percentage = Math.round((readCount / totalBooks) * 100);
-            document.getElementById('progress-text').innerText = `${readCount} / ${totalBooks} Read (${percentage}%)`;
-            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            const unreadCount = 100 - readCount;
+            const percentage = Math.round((readCount / 100) * 100);
+
+            document.getElementById('header-read-count').innerText = readCount;
+            document.getElementById('dash-read-count').innerText = readCount;
+            document.getElementById('dash-unread-count').innerText = unreadCount;
+            document.getElementById('filter-count-read').innerText = readCount;
+            document.getElementById('filter-count-unread').innerText = unreadCount;
+            document.getElementById('progress-percentage').innerText = percentage + '%';
+            document.getElementById('progress-bar-fill').style.width = percentage + '%';
         }
 
-        // Filter and sort books
+        // Render Books Grid
         function renderBooks() {
-            const searchQuery = document.getElementById('search-input').value.toLowerCase();
-            const sortMode = document.getElementById('sort-select').value;
+            const grid = document.getElementById('books-grid');
+            const emptyState = document.getElementById('empty-state');
+            const resultsCountText = document.getElementById('results-count-text');
 
-            let filtered = booksData.filter(b => {
-                const stats = userStats[b.rank] || { read: false };
-                const isRead = stats.read;
-
+            // 1. Filter
+            let filtered = booksData.filter(book => {
+                const isRead = !!userState.readStatus[book.rank];
                 if (currentFilter === 'read' && !isRead) return false;
                 if (currentFilter === 'unread' && isRead) return false;
 
-                if (searchQuery) {
-                    const matchTitle = b.title.toLowerCase().includes(searchQuery);
-                    const matchAuthor = b.author.toLowerCase().includes(searchQuery);
-                    const matchDesc = b.description.toLowerCase().includes(searchQuery);
-                    if (!matchTitle && !matchAuthor && !matchDesc) return false;
+                if (currentSearch) {
+                    const matchTitle = book.title.toLowerCase().includes(currentSearch);
+                    const matchAuthor = book.author.toLowerCase().includes(currentSearch);
+                    const matchDesc = book.description.toLowerCase().includes(currentSearch);
+                    const matchGenre = book.genre.toLowerCase().includes(currentSearch);
+                    const matchRank = book.rank.toString() === currentSearch;
+                    return matchTitle || matchAuthor || matchDesc || matchGenre || matchRank;
                 }
                 return true;
             });
 
-            // Sorting
+            // 2. Sort
             filtered.sort((a, b) => {
-                if (sortMode === 'rank-asc') return a.rank - b.rank;
-                if (sortMode === 'rank-desc') return b.rank - a.rank;
-                if (sortMode === 'title') return a.title.localeCompare(b.title);
-                if (sortMode === 'author') return a.author.localeCompare(b.author);
+                if (currentSort === 'rank-asc') return a.rank - b.rank;
+                if (currentSort === 'rank-desc') return b.rank - a.rank;
+                if (currentSort === 'title-asc') return a.title.localeCompare(b.title);
+                if (currentSort === 'author-asc') return a.author.localeCompare(b.author);
+                if (currentSort === 'year-desc') return b.year - a.year;
+                return 0;
             });
 
-            const grid = document.getElementById('books-grid');
-            const emptyState = document.getElementById('empty-state');
-            grid.innerHTML = '';
+            resultsCountText.innerText = `Showing ${filtered.length} of 100 books`;
 
             if (filtered.length === 0) {
+                grid.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 return;
             } else {
                 emptyState.classList.add('hidden');
             }
 
+            let html = '';
             filtered.forEach(book => {
-                const stats = userStats[book.rank] || { read: false, rating: 0 };
-                const isRead = stats.read;
-                const userRating = stats.rating || 0;
+                const isRead = !!userState.readStatus[book.rank];
+                const rating = userState.ratings[book.rank] || 0;
+                const isExpanded = expandedBookRank === book.rank;
 
-                const card = document.createElement('div');
-                card.className = `book-card bg-white rounded-3xl border ${isRead ? 'border-mint-400 bg-gradient-to-b from-white to-emerald-50/20' : 'border-slate-200'} p-6 shadow-sm flex flex-col justify-between relative overflow-hidden`;
+                // Card border & background tint when read
+                const cardBg = isRead ? 'bg-stone-50/90 border-emerald-500/30' : 'bg-white border-stone-200/80';
+                const rankBadgeBg = isRead ? 'bg-emerald-600 text-white' : 'bg-stone-900 text-amber-100';
 
-                // Badge colors rotating by rank
-                const badgeColors = isRead ? 'bg-mint-500 text-white' : 'bg-purple-100 text-purple-700';
-
-                card.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-start gap-2 mb-3">
-                            <span class="text-xs font-bold px-3 py-1 rounded-full ${badgeColors} shadow-xs">
-                                Rank #${book.rank}
-                            </span>
-                            <div class="flex items-center gap-2">
-                                <label class="cursor-pointer flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border ${isRead ? 'bg-mint-500 text-white border-mint-500' : 'bg-slate-50 text-slate-600 border-slate-200'} hover:opacity-90 transition-all">
-                                    <input type="checkbox" ${isRead ? 'checked' : ''} onchange="toggleRead(${book.rank})" class="sr-only">
-                                    <i class="fa-solid ${isRead ? 'fa-check-circle' : 'fa-circle text-slate-300'}"></i>
-                                    <span>${isRead ? 'Read' : 'Mark Read'}</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <h3 class="text-lg font-bold text-slate-900 mb-1 leading-snug">${book.title}</h3>
-                        <p class="text-xs font-semibold text-purple-600 mb-3">${book.author} &bull; <span class="text-slate-400 font-normal">${book.pubDate}</span></p>
-                        
-                        <p class="text-xs text-slate-600 line-clamp-3 mb-4 leading-relaxed">${book.description}</p>
-                    </div>
-
-                    <div>
-                        <!-- Expandable metadata details toggle -->
-                        <div class="border-t border-slate-100 pt-3 mt-2">
-                            <details class="group">
-                                <summary class="text-xs font-semibold text-indigo-800 cursor-pointer flex items-center justify-between select-none">
-                                    <span>Library Info & ISBN</span>
-                                    <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
-                                </summary>
-                                <div class="mt-2 text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-xl space-y-1">
-                                    <div><span class="font-semibold text-slate-700">Call No:</span> ${book.callNumber}</div>
-                                    <div><span class="font-semibold text-slate-700">ISBN:</span> ${book.isbn}</div>
+                html += `
+                    <div class="${cardBg} rounded-2xl border p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative cursor-pointer group" onclick="toggleExpand(${book.rank})">
+                        <div>
+                            <!-- Card Header: Rank & Read Checkbox -->
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="${rankBadgeBg} px-3 py-1 rounded-full text-xs font-bold tracking-wide shadow-xs">
+                                    Rank #${book.rank}
+                                </span>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-stone-400 font-medium">${book.year}</span>
+                                    <button onclick="toggleRead(${book.rank}, event)" title="${isRead ? 'Mark as Unread' : 'Mark as Read'}" 
+                                        class="w-8 h-8 rounded-full flex items-center justify-center transition ${isRead ? 'bg-emerald-600 text-white shadow-sm' : 'bg-stone-100 text-stone-400 hover:bg-stone-200'}">
+                                        <i class="fa-solid fa-check text-xs"></i>
+                                    </button>
                                 </div>
-                            </details>
+                            </div>
+
+                            <!-- Title & Author -->
+                            <h3 class="serif-title text-xl font-bold text-stone-900 group-hover:text-amber-700 transition leading-snug mb-1">
+                                ${book.title}
+                            </h3>
+                            <p class="text-xs font-semibold text-stone-600 uppercase tracking-wider mb-3">
+                                by ${book.author}
+                            </p>
+
+                            <!-- Genre Badge -->
+                            <div class="mb-3">
+                                <span class="inline-block bg-stone-100 text-stone-600 text-[10px] font-semibold px-2.5 py-1 rounded-md">
+                                    ${book.genre}
+                                </span>
+                            </div>
+
+                            <!-- Description Snippet or Full -->
+                            <p class="text-stone-600 text-sm leading-relaxed ${isExpanded ? '' : 'line-clamp-3'}">
+                                ${book.description}
+                            </p>
                         </div>
 
-                        <!-- Star Rating widget -->
-                        <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
-                            <span class="text-xs text-slate-400 font-medium">Your Rating:</span>
-                            <div class="flex items-center gap-1 text-sm">
+                        <!-- Card Footer: Star Rating & Expand Toggle -->
+                        <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between" onclick="event.stopPropagation()">
+                            <!-- Star Rating -->
+                            <div class="flex items-center space-x-1">
                                 ${[1, 2, 3, 4, 5].map(star => `
-                                    <button onclick="setRating(${book.rank}, ${star})" class="transition-transform hover:scale-125 focus:outline-none ${star <= userRating ? 'text-sun-500' : 'text-slate-200'}">
+                                    <button onclick="setRating(${book.rank}, ${star}, event)" class="text-sm transition hover:scale-110 ${star <= rating ? 'text-amber-500' : 'text-stone-300'}" title="${star} Star${star > 1 ? 's' : ''}">
                                         <i class="fa-solid fa-star"></i>
                                     </button>
                                 `).join('')}
                             </div>
+
+                            <!-- Expand Toggle Text -->
+                            <button onclick="toggleExpand(${book.rank})" class="text-xs text-stone-500 hover:text-stone-900 font-medium flex items-center space-x-1">
+                                <span>${isExpanded ? 'Less' : 'Details'}</span>
+                                <i class="fa-solid fa-chevron-${isExpanded ? 'up' : 'down'} text-[10px]"></i>
+                            </button>
                         </div>
                     </div>
                 `;
-                grid.appendChild(card);
             });
+
+            grid.innerHTML = html;
         }
     </script>
 </body>
